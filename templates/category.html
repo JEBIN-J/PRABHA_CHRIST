@@ -1,39 +1,30 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
+
+{% block title %}{{ category.name }} — Prabha Chris{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="section-title">{{ category.name }}</h1>
-    <p style="text-align: center; color: var(--accent-gold); opacity: 0.7; margin-top: -3rem; margin-bottom: 5rem;">
-        Curated selection of artworks in the {{ category.name.lower() }} category.</p>
-
-    <div class="filter-tabs">
-        <a href="{{ url_for('index') }}" class="filter-btn">All Work</a>
-        {% for cat in categories %}
-        <a href="{{ url_for('category_view', category_id=cat.id) }}"
-            class="filter-btn {% if cat.id == category.id %}active{% endif %}">{{ cat.name }}</a>
-        {% endfor %}
-    </div>
-
-    <div class="gallery-grid">
-        {% if artworks %}
-        {% for art in artworks %}
-        <div class="art-card">
-            <div class="art-img-container">
-                <img src="{{ url_for('static', filename='uploads/' + art.image_path) }}" alt="{{ art.title }}">
-                <div class="art-overlay">
-                    <span class="category-tag">{{ category.name }}</span>
-                    <h3 style="font-size: 1.5rem;">{{ art.title }}</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">View Masterpiece →
-                    </p>
-                </div>
+{% from "_banner.html" import banner %}
+    <main class="page-main">
+    {{ banner(category.name, "The", category.name, "A curated selection of work in the " ~ category.name.lower() ~ " collection.", "frames") }}
+    <section class="gallery-section">
+        <div class="gallery-header fade-up">
+            <div>
+                <div class="section-label">Collection</div>
+                <h2 class="gallery-h2">{{ category.name }}</h2>
+            </div>
+            <div class="filter-wrap">
+                <a href="{{ url_for('gallery') }}" class="filter-btn"><span>All Work</span></a>
+                {% for cat in categories %}
+                <a href="{{ url_for('category_view', category_id=cat.id) }}"
+                    class="filter-btn {% if cat.id == category.id %}active{% endif %}"><span>{{ cat.name }}</span></a>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
-        {% else %}
-        <div style="grid-column: 1 / -1; text-align: center; padding: 5rem; color: var(--text-secondary);">
-            <p>No artworks in this category yet.</p>
+        <div class="gallery-grid" id="gGrid">
+            {% include '_gallery_items.html' %}
         </div>
-        {% endif %}
-    </div>
-</div>
+    </section>
+    </main>
+
+    {% include '_lightbox.html' %}
 {% endblock %}

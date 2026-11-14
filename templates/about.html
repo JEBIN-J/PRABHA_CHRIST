@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}About — Prabha Chris{% endblock %}
+
+{% block content %}
+    <main class="page-main">
+    <section class="about-stage">
+        <div class="crumbs"><a href="{{ url_for('index') }}">Home</a><i>◆</i><span>About</span></div>
+        <h1 class="ab-title">Meet the <em>Artist</em></h1>
+        <svg class="ab-swash" viewBox="0 0 320 24" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="abs" x1="0" x2="1"><stop offset="0" stop-color="#b9833f"/><stop offset="1" stop-color="#f0cf94"/></linearGradient></defs>
+            <path d="M0 18 C60 4 150 2 220 10 C265 15 300 12 320 6" fill="none" stroke="url(#abs)" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <p class="ab-sub">Where emotion meets timelessness — the story and <br>philosophy behind the work.</p>
+        <p class="ab-text">Prabha Chris is a passionate artist whose work reflects a deep connection between art, emotion and life. Through vibrant colours and expressive brushstrokes, she brings stories to life on canvas, creating timeless pieces that inspire and uplift.</p>
+        <a class="ab-cta" href="{{ url_for('journey') }}"><span>Explore Her Journey</span><i>→</i></a>
+
+        <img class="ab-art" src="{{ url_for('static', filename='img/about-art.jpg') }}" alt="" aria-hidden="true">
+
+        <div class="ab-cards">
+            <article class="ab-card c1">
+                <img class="ab-ico" src="{{ url_for('static', filename='img/icon-mission.jpg') }}" alt="">
+                <div><h3>Our Mission</h3><p>To create art that touches hearts <br>and celebrates the beauty of life.</p></div>
+            </article>
+            <article class="ab-card c2">
+                <img class="ab-ico" src="{{ url_for('static', filename='img/icon-vision.jpg') }}" alt="">
+                <div><h3>Our Vision</h3><p>To inspire through art and spread <br>positivity across the world.</p></div>
+            </article>
+            <article class="ab-card c3">
+                <img class="ab-ico" src="{{ url_for('static', filename='img/icon-passion.jpg') }}" alt="">
+                <div><h3>Our Passion</h3><p>Art is not just what we do, <br>it’s who we are.</p></div>
+            </article>
+        </div>
+    </section>
+
+    <section id="about" class="about fade-up">
+        <div class="about-image-wrap">
+            <div class="about-image-frame"></div>
+            <img class="about-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=700&q=80"
+                alt="Prabha Chris portrait">
+            <div class="glow-under"></div>
+            <div class="about-chip">Visionary · Explorer</div>
+        </div>
+        <div class="about-content">
+            <img class="ab-label-ico" src="{{ url_for('static', filename='img/logo-palette.png') }}" alt="">
+            <div class="section-label">The Artist</div>
+            <h2 class="about-h2">Where <em>emotion</em> meets timelessness</h2>
+            <p class="about-p">Prabha Chris is a visionary artist dedicated to exploring the profound intersection of
+                human emotion and digital form. Her work is characterized by its ability to evoke deep introspection and
+                a sense of timelessness, transcending traditional boundaries of media.</p>
+            <p class="about-p">With a practice that spans intricate oil paintings, expressive sketches, and cutting-edge
+                digital art, Prabha's creations are a testament to her belief that art is a deliberate choice made to
+                reveal what is often unseen.</p>
+            <div class="about-stats">
+                <div class="stat"><span class="stat-num">12+</span><span class="stat-label">Exhibitions</span></div>
+                <div class="stat"><span class="stat-num">150+</span><span class="stat-label">Masterpieces</span></div>
+                <div class="stat"><span class="stat-num">10+</span><span class="stat-label">Awards</span></div>
+            </div>
+        </div>
+    </section>
+    </main>
+{% endblock %}

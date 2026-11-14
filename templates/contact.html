@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}Contact — Prabha Chris{% endblock %}
+
+{% block content %}
+{% from "_banner.html" import banner %}
+    <main class="page-main">
+    {{ banner('Contact', 'Get in', 'Touch', 'Inquiries, commissions and private viewings — the studio is always open.', 'palette') }}
+    <section id="contact" class="contact-section">
+        <div class="contact-inner fade-up">
+            <div class="section-label" style="justify-content:center;margin-bottom:24px">Get In Touch</div>
+            <h2 class="contact-h2">Acquire<br>a <em>Work</em></h2>
+            <p class="contact-p">For inquiries about available works, commissions, or special projects — reach out
+                directly to the studio.</p>
+            <a class="contact-email" href="mailto:studio@prabhachris.com">studio@prabhachris.com</a>
+            <div class="social-row">
+                <a class="soc-link" href="#">Instagram</a>
+                <a class="soc-link" href="#">Artsy</a>
+                <a class="soc-link" href="#">Behance</a>
+                <a class="soc-link" href="#">LinkedIn</a>
+            </div>
+        </div>
+    </section>
+    </main>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}Exhibitions — Prabha Chris{% endblock %}
+
+{% block content %}
+{% from "_banner.html" import banner %}
+    <main class="page-main">
+    {{ banner('Exhibitions', 'Featured', 'Shows', 'Solo and group exhibitions from Paris to Tokyo.', 'easel') }}
+    <section id="exhibitions" class="exhibitions-section fade-up">
+        <div class="section-label">Select Shows</div>
+        <h2 class="gallery-h2">Exhibitions &<br><em>Recognition</em></h2>
+        <div class="ex-grid">
+            <div class="ex-card"><span class="ex-type">Solo Exhibition</span>
+                <div class="ex-name">Horizon</div>
+                <div class="ex-loc">The Grand Palace, Paris</div><span class="ex-year">2025</span>
+            </div>
+            <div class="ex-card"><span class="ex-type">Series Debut</span>
+                <div class="ex-name">Deep Silence</div>
+                <div class="ex-loc">Artist of the Decade Award</div><span class="ex-year">2023</span>
+            </div>
+            <div class="ex-card"><span class="ex-type">Group Show</span>
+                <div class="ex-name">Visions of Future</div>
+                <div class="ex-loc">Modern Art Center, Tokyo</div><span class="ex-year">2021</span>
+            </div>
+        </div>
+    </section>
+    </main>
+{% endblock %}

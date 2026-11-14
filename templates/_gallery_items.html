@@ -1,0 +1,15 @@
+{% for artwork in artworks %}
+{% set cat_name = artwork.category_name or 'Art' %}
+{% set img_url = url_for('static', filename='uploads/' + artwork.image_path) %}
+<div class="gallery-item" data-cat="cat-{{ artwork.category_id }}"
+    onclick='openLB({{ artwork.title|tojson }}, {{ (cat_name ~ " · " ~ (artwork.created_at[:4] if artwork.created_at else "Recent"))|tojson }}, {{ ("A profound expression of " ~ cat_name.lower() ~ " by Prabha Chris.")|tojson }}, {{ img_url|tojson }})'>
+    <img src="{{ img_url }}" alt="{{ artwork.title }}">
+    <div class="gallery-overlay">
+        <div class="g-title">{{ artwork.title }}</div>
+        <div class="g-meta">{{ cat_name }}</div>
+        <div class="g-view">View Work →</div>
+    </div>
+</div>
+{% else %}
+<p class="empty-note">No artworks here yet — please check back soon.</p>
+{% endfor %}

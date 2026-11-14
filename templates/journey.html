@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}Journey — Prabha Chris{% endblock %}
+
+{% block content %}
+{% from "_banner.html" import banner %}
+    <main class="page-main">
+    {{ banner('Journey', 'My', 'Journey', 'A decade of milestones, awards and formative years in fine art.', 'leaf') }}
+    <section id="journey" class="timeline-section">
+        <div class="timeline-inner">
+            <div class="section-label" style="margin-bottom:24px">The Journey</div>
+            <h2 class="timeline-h2">A Life<br>in <em>Art</em></h2>
+            <div class="timeline">
+                <div class="tl-entry"><span class="tl-year">2025</span>
+                    <div class="tl-dot"></div>
+                    <div class="tl-event">"Horizon" Solo Exhibition</div>
+                    <p class="tl-detail">A landmark solo exhibition showcased at The Grand Palace in Paris, receiving
+                        critical acclaim for its exploration of digital frontiers.</p>
+                </div>
+                <div class="tl-entry"><span class="tl-year">2023</span>
+                    <div class="tl-dot"></div>
+                    <div class="tl-event">Artist of the Decade</div>
+                    <p class="tl-detail">Awarded the prestigious "Artist of the Decade" for the "Deep Silence" series,
+                        marking a significant milestone in her career.</p>
+                </div>
+                <div class="tl-entry"><span class="tl-year">2020</span>
+                    <div class="tl-dot"></div>
+                    <div class="tl-event">Global Recognition</div>
+                    <p class="tl-detail">Featured in leading international art publications, establishing a global
+                        presence in the contemporary art scene.</p>
+                </div>
+                <div class="tl-entry"><span class="tl-year">2013</span>
+                    <div class="tl-dot"></div>
+                    <div class="tl-event">Formative Years</div>
+                    <p class="tl-detail">Commenced her dedicated practice in fine arts, focusing on the synthesis of
+                        traditional and modern emotive techniques.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    </main>
+{% endblock %}

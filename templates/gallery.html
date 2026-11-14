@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}Gallery — Prabha Chris{% endblock %}
+
+{% block content %}
+{% from "_banner.html" import banner %}
+    <main class="page-main">
+    {{ banner('Gallery', 'The', 'Gallery', 'Paintings, sketches, digital and abstract works — every piece a deliberate choice.', 'frames') }}
+    <section id="gallery" class="gallery-section">
+        <div class="gallery-header fade-up">
+            <div>
+                <div class="section-label">The Work</div>
+                <h2 class="gallery-h2">Art<br><em>Collections</em></h2>
+            </div>
+            <div class="filter-wrap">
+                <button class="filter-btn active" onclick="filterG('all',this)"><span>All</span></button>
+                {% for category in categories %}
+                <button class="filter-btn" onclick="filterG('cat-{{ category.id }}',this)"><span>{{ category.name }}</span></button>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="gallery-grid" id="gGrid">
+            {% include '_gallery_items.html' %}
+        </div>
+    </section>
+    </main>
+
+    {% include '_lightbox.html' %}
+{% endblock %}

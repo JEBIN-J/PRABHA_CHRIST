@@ -1,0 +1,19 @@
+{# Painterly page banner.  Usage:
+   {% from "_banner.html" import banner %}
+   {{ banner("About", "Meet the", "Artist", "Where emotion meets timelessness.", "brushes") }}
+   deco: brushes | frames | easel | leaf | palette #}
+{% macro banner(crumb, plain, script, sub, deco) %}
+<section class="page-banner">
+    <div class="banner-corner" aria-hidden="true"></div>
+    <div class="banner-deco deco-{{ deco }}" aria-hidden="true"></div>
+    <div class="banner-inner">
+        <div class="crumbs"><a href="{{ url_for('index') }}">Home</a><i>◆</i><span>{{ crumb }}</span></div>
+        <h1 class="banner-title">{{ plain }} <em>{{ script }}</em></h1>
+        <svg class="banner-swash" viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="bsw" x1="0" x2="1"><stop offset="0" stop-color="#b9833f"/><stop offset="1" stop-color="#f0cf94"/></linearGradient></defs>
+            <path d="M0 14 C60 2 140 2 210 10 C250 14 280 12 300 6" fill="none" stroke="url(#bsw)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <p class="banner-sub">{{ sub }}</p>
+    </div>
+</section>
+{% endmacro %}
