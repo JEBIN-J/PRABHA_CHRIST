@@ -33,30 +33,85 @@
         </div>
     </section>
 
-    <section id="about" class="about fade-up">
-        <div class="about-image-wrap">
-            <div class="about-image-frame"></div>
-            <img class="about-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=700&q=80"
-                alt="Prabha Chris portrait">
-            <div class="glow-under"></div>
-            <div class="about-chip">Visionary · Explorer</div>
+    <section id="about" class="ab-body">
+        <!-- portrait column -->
+        <div class="ab-portrait fade-up">
+            <div class="ab-wash" aria-hidden="true"></div>
+            <img class="ab-leaf" src="{{ url_for('static', filename='img/deco-leaf.jpg') }}" alt="" aria-hidden="true">
+            <div class="ab-arch">
+                <img class="ab-photo" src="{{ url_for('static', filename='img/artist-portrait.jpg') }}" alt="Portrait of Prabha Chris">
+            </div>
+            <div class="ab-badge" aria-hidden="true">
+                <svg viewBox="0 0 160 160" class="ab-badge-ring">
+                    <defs><path id="abBadgePath" d="M80,80 m-60,0 a60,60 0 1,1 120,0 a60,60 0 1,1 -120,0"/></defs>
+                    <text><textPath href="#abBadgePath">FINE ARTIST · GLOBAL · EST. 2013 · FINE ARTIST · GLOBAL ·</textPath></text>
+                </svg>
+                <img src="{{ url_for('static', filename='img/logo-palette.png') }}" alt="">
+            </div>
+            <div class="ab-chip">Visionary · Explorer</div>
         </div>
-        <div class="about-content">
+
+        <!-- text column -->
+        <div class="ab-copy fade-up">
             <img class="ab-label-ico" src="{{ url_for('static', filename='img/logo-palette.png') }}" alt="">
             <div class="section-label">The Artist</div>
-            <h2 class="about-h2">Where <em>emotion</em> meets timelessness</h2>
-            <p class="about-p">Prabha Chris is a visionary artist dedicated to exploring the profound intersection of
+            <h2 class="ab-h2">Where <em>emotion</em> meets timelessness</h2>
+            <p class="ab-lead">Prabha Chris is a visionary artist dedicated to exploring the profound intersection of
                 human emotion and digital form. Her work is characterized by its ability to evoke deep introspection and
                 a sense of timelessness, transcending traditional boundaries of media.</p>
-            <p class="about-p">With a practice that spans intricate oil paintings, expressive sketches, and cutting-edge
+            <p class="ab-p">With a practice that spans intricate oil paintings, expressive sketches, and cutting-edge
                 digital art, Prabha's creations are a testament to her belief that art is a deliberate choice made to
                 reveal what is often unseen.</p>
-            <div class="about-stats">
-                <div class="stat"><span class="stat-num">12+</span><span class="stat-label">Exhibitions</span></div>
-                <div class="stat"><span class="stat-num">150+</span><span class="stat-label">Masterpieces</span></div>
-                <div class="stat"><span class="stat-num">10+</span><span class="stat-label">Awards</span></div>
+
+            <div class="ab-sign">
+                <span class="ab-sign-name">Prabha Chris</span>
+                <svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 10 C40 2 100 2 140 8 C165 11 185 9 200 4" fill="none" stroke="#c4914a" stroke-width="2.5" stroke-linecap="round"/></svg>
+                <span class="ab-sign-role">Fine Artist · Est. 2013</span>
+            </div>
+
+            <ul class="ab-chips" aria-label="Mediums">
+                <li>Oil on Canvas</li><li>Charcoal Sketch</li><li>Watercolor</li><li>Digital Art</li><li>Abstract</li>
+            </ul>
+
+            <div class="ab-stats">
+                <div class="ab-stat">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="9" width="32" height="30" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="14" y="15" width="20" height="18" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 30 l6-7 5 5 3-3 4 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                    <b data-count="12" data-suffix="+">0</b><span>Exhibitions</span>
+                </div>
+                <div class="ab-stat">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 38c0-6 4-9 9-9s9 3 9 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M24 31 38 9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="14" cy="37" r="3" fill="currentColor"/></svg>
+                    <b data-count="150" data-suffix="+">0</b><span>Masterpieces</span>
+                </div>
+                <div class="ab-stat">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="19" r="10" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M18 28 14 41l10-5 10 5-4-13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="m24 14 1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z" fill="currentColor"/></svg>
+                    <b data-count="10" data-suffix="+">0</b><span>Awards</span>
+                </div>
+            </div>
+
+            <div class="ab-actions">
+                <a class="link-pill" href="{{ url_for('gallery') }}">View the gallery <span>→</span></a>
+                <a class="link-pill light" href="{{ url_for('contact') }}">Private inquiry</a>
             </div>
         </div>
+    </section>
+
+    <!-- creative process -->
+    <section class="ab-process fade-up">
+        <div class="section-label" style="justify-content:center">The Process</div>
+        <h2 class="ab-h2 center">How a piece <em>comes to life</em></h2>
+        <div class="ab-steps">
+            <div class="ab-step"><span class="ab-num">01</span><h3>Inspiration</h3><p>Every work begins with a feeling — a memory, a landscape, a face — noted down before a single line is drawn.</p></div>
+            <div class="ab-step"><span class="ab-num">02</span><h3>Sketch</h3><p>Quick studies in charcoal find the movement and balance of the composition.</p></div>
+            <div class="ab-step"><span class="ab-num">03</span><h3>Colour &amp; Layers</h3><p>Rich maroons, golds and glazes are built up slowly, layer over layer, until the surface glows.</p></div>
+            <div class="ab-step"><span class="ab-num">04</span><h3>Finish &amp; Frame</h3><p>The final details, a signature and the right frame — ready to meet its viewer.</p></div>
+        </div>
+    </section>
+
+    <!-- closing statement -->
+    <section class="ab-quote fade-up">
+        <span class="ab-qmark" aria-hidden="true">“</span>
+        <p>Art should disturb the comfortable and comfort the disturbed. Every stroke is a deliberate choice.</p>
+        <span class="ab-qauthor">— Prabha Chris</span>
     </section>
     </main>
 {% endblock %}
