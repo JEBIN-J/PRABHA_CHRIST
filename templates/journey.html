@@ -3,39 +3,48 @@
 {% block title %}Journey — Prabha Chris{% endblock %}
 
 {% block content %}
-{% from "_banner.html" import banner %}
     <main class="page-main">
-    {{ banner('Journey', 'My', 'Journey', 'A decade of milestones, awards and formative years in fine art.', 'leaf') }}
-    <section id="journey" class="timeline-section">
-        <div class="timeline-inner">
-            <div class="section-label" style="margin-bottom:24px">The Journey</div>
-            <h2 class="timeline-h2">A Life<br>in <em>Art</em></h2>
-            <div class="timeline">
-                <div class="tl-entry"><span class="tl-year">2025</span>
-                    <div class="tl-dot"></div>
-                    <div class="tl-event">"Horizon" Solo Exhibition</div>
-                    <p class="tl-detail">A landmark solo exhibition showcased at The Grand Palace in Paris, receiving
-                        critical acclaim for its exploration of digital frontiers.</p>
-                </div>
-                <div class="tl-entry"><span class="tl-year">2023</span>
-                    <div class="tl-dot"></div>
-                    <div class="tl-event">Artist of the Decade</div>
-                    <p class="tl-detail">Awarded the prestigious "Artist of the Decade" for the "Deep Silence" series,
-                        marking a significant milestone in her career.</p>
-                </div>
-                <div class="tl-entry"><span class="tl-year">2020</span>
-                    <div class="tl-dot"></div>
-                    <div class="tl-event">Global Recognition</div>
-                    <p class="tl-detail">Featured in leading international art publications, establishing a global
-                        presence in the contemporary art scene.</p>
-                </div>
-                <div class="tl-entry"><span class="tl-year">2013</span>
-                    <div class="tl-dot"></div>
-                    <div class="tl-event">Formative Years</div>
-                    <p class="tl-detail">Commenced her dedicated practice in fine arts, focusing on the synthesis of
-                        traditional and modern emotive techniques.</p>
-                </div>
+    <section class="jr-stage">
+        <div class="crumbs"><a href="{{ url_for('index') }}">Home</a><i>◆</i><span>Journey</span></div>
+        <h1 class="jr-title">My <em>Journey</em></h1>
+        <svg class="jr-swash" viewBox="0 0 440 30" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="jsw" x1="0" x2="1"><stop offset="0" stop-color="#b9833f"/><stop offset="1" stop-color="#f0cf94"/></linearGradient></defs>
+            <path d="M0 22 C90 4 230 2 320 10 C380 15 415 13 440 7" fill="none" stroke="url(#jsw)" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <div class="jr-orn" aria-hidden="true"><i></i><img src="{{ url_for('static', filename='img/logo-palette.png') }}" alt=""><i></i></div>
+        <p class="jr-sub">A decade of milestones, awards and formative years <br>in fine art.</p>
+        <a class="jr-cta" href="#timeline"><span>Explore My Journey</span><i>→</i></a>
+        <img class="jr-art" src="{{ url_for('static', filename='img/journey-art.jpg') }}" alt="" aria-hidden="true">
+    </section>
+
+    <section id="timeline" class="jr-life">
+        <div class="jr-back">
+            <img class="jr-d jr-dl" src="{{ url_for('static', filename='img/jr-l.jpg') }}" alt="" aria-hidden="true">
+            <img class="jr-d jr-dm" src="{{ url_for('static', filename='img/jr-m.jpg') }}" alt="" aria-hidden="true">
+            <img class="jr-d jr-dr" src="{{ url_for('static', filename='img/jr-r.jpg') }}" alt="" aria-hidden="true">
+            <div class="jr-head fade-up">
+                <div class="jr-label"><i></i><span>The Journey</span><i></i></div>
+                <h2 class="jr-h2"><span>A Life</span><span class="l2">in <em>Art</em></span></h2>
             </div>
+            <figure class="jr-photo fade-up"><img src="{{ url_for('static', filename='img/journey-photo.jpg') }}" alt="Prabha Chris painting in the studio"></figure>
+        </div>
+
+        <div class="jr-tl">
+            {% set items = [
+                ('2025', '"Horizon" Solo Exhibition', 'A landmark solo exhibition showcased at The Grand Palace in Paris, receiving critical acclaim for its exploration of digital frontiers.'),
+                ('2023', 'Artist of the Decade', 'Awarded the prestigious "Artist of the Decade" for the "Deep Silence" series, marking a significant milestone in her career.'),
+                ('2020', 'Global Recognition', 'Featured in leading international art publications, establishing a global presence in the contemporary art scene.'),
+                ('2013', 'Formative Years', 'Commenced her dedicated practice in fine arts, focusing on the synthesis of traditional and modern emotive techniques.')
+            ] %}
+            {% for year, title, text in items %}
+            <article class="jr-item fade-up {{ 'left' if loop.index is odd else 'right' }}">
+                <div class="jr-medal"><span>{{ year }}</span></div>
+                <div class="jr-card">
+                    <h3>{{ title }}</h3>
+                    <p>{{ text }}</p>
+                </div>
+            </article>
+            {% endfor %}
         </div>
     </section>
     </main>
