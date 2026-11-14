@@ -48,6 +48,18 @@ def init_db():
         )
     ''')
 
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS inquiries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            inquiry_type TEXT,
+            subject TEXT NOT NULL,
+            message TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
     # Add default categories if empty
     cursor = conn.cursor()
     cursor.execute('SELECT COUNT(*) FROM categories')
@@ -119,9 +131,24 @@ def exhibitions():
     return render_template('exhibitions.html')
 
 
-@app.route('/contact')
+INQUIRY_TYPES = ['Commission a Painting', 'Purchase an Artwork', 'Exhibition / Collaboration', 'General Question']
+
+
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    return render_template('contact.html')
+    if request.method == 'POST':
+        form = {k: (request.form.get(k) or '').strip() for k in ('name', 'email', 'inquiry_type', 'subject', 'message')}
+        if not all(form[k] for k in ('name', 'email', 'subject', 'message')) or '@' not in form['email']:
+            flash('Please fill in your name, a valid email, a subject and your message.')
+            return render_template('contact.html', form=form, inquiry_types=INQUIRY_TYPES)
+        conn = get_db_connection()
+        conn.execute('INSERT INTO inquiries (name, email, inquiry_type, subject, message) VALUES (?, ?, ?, ?, ?)',
+                     (form['name'], form['email'], form['inquiry_type'] or None, form['subject'], form['message']))
+        conn.commit()
+        conn.close()
+        flash('Thank you, %s — your message has been sent. I will get back to you soon.' % form['name'])
+        return redirect(url_for('contact'))
+    return render_template('contact.html', form={}, inquiry_types=INQUIRY_TYPES)
 
 
 @app.route('/profile')
@@ -192,8 +219,9 @@ def secret_add():
             return redirect(url_for('index'))
             
     categories = conn.execute('SELECT * FROM categories').fetchall()
+    inquiries = conn.execute('SELECT * FROM inquiries ORDER BY created_at DESC, id DESC LIMIT 50').fetchall()
     conn.close()
-    return render_template('secret_add.html', categories=categories)
+    return render_template('secret_add.html', categories=categories, inquiries=inquiries)
 
 init_db()
 

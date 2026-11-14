@@ -2,23 +2,113 @@
 
 {% block title %}Contact — Prabha Chris{% endblock %}
 
+{# ---- Studio details: edit these to your real contact information ---- #}
+{% set studio = {
+    'phone': '+91 98765 43210',
+    'email': 'prabhachris.art@gmail.com',
+    'address': '123 Art Street, Chennai – 600001, India',
+    'hours': 'Mon – Sat: 9:00 AM – 6:00 PM',
+} %}
+{% set maps_url = 'https://www.google.com/maps/search/?api=1&query=' ~ (studio.address | urlencode) %}
+
 {% block content %}
-{% from "_banner.html" import banner %}
     <main class="page-main">
-    {{ banner('Contact', 'Get in', 'Touch', 'Inquiries, commissions and private viewings — the studio is always open.', 'palette') }}
-    <section id="contact" class="contact-section">
-        <div class="contact-inner fade-up">
-            <div class="section-label" style="justify-content:center;margin-bottom:24px">Get In Touch</div>
-            <h2 class="contact-h2">Acquire<br>a <em>Work</em></h2>
-            <p class="contact-p">For inquiries about available works, commissions, or special projects — reach out
-                directly to the studio.</p>
-            <a class="contact-email" href="mailto:studio@prabhachris.com">studio@prabhachris.com</a>
-            <div class="social-row">
-                <a class="soc-link" href="#">Instagram</a>
-                <a class="soc-link" href="#">Artsy</a>
-                <a class="soc-link" href="#">Behance</a>
-                <a class="soc-link" href="#">LinkedIn</a>
+    <section class="ct-stage">
+        <div class="crumbs"><a href="{{ url_for('index') }}">Home</a><i>◆</i><span>Contact</span></div>
+        <h1 class="ct-title">Get in <em>Touch</em></h1>
+        <svg class="ct-swash" viewBox="0 0 320 22" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="csw" x1="0" x2="1"><stop offset="0" stop-color="#b9833f"/><stop offset="1" stop-color="#f0cf94"/></linearGradient></defs>
+            <path d="M0 16 C60 4 150 2 220 9 C265 13 300 11 320 6" fill="none" stroke="url(#csw)" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <p class="ct-sub">Have a question, commission request or just want to <br>share your thoughts? I’d love to hear from you.</p>
+        <div class="ct-orn" aria-hidden="true"><i></i><img src="{{ url_for('static', filename='img/logo-palette.png') }}" alt=""><i></i></div>
+        <img class="ct-art" src="{{ url_for('static', filename='img/contact-art.jpg') }}" alt="" aria-hidden="true">
+    </section>
+
+    <section class="ct-body">
+        <img class="ct-side ct-side-l" src="{{ url_for('static', filename='img/ct-l.jpg') }}" alt="" aria-hidden="true">
+        <img class="ct-side ct-side-r" src="{{ url_for('static', filename='img/ct-r.jpg') }}" alt="" aria-hidden="true">
+
+        <div class="ct-grid">
+            <!-- contact information -->
+            <div class="ct-info fade-up">
+                <div class="ct-pill-head"><i></i><span>Contact Information</span><i></i></div>
+                <a class="ct-card" href="tel:{{ studio.phone | replace(' ', '') }}">
+                    <span class="ct-ico"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" fill="currentColor"/></svg></span>
+                    <span class="ct-txt"><b>Phone</b><span>{{ studio.phone }}</span></span>
+                </a>
+                <a class="ct-card" href="mailto:{{ studio.email }}">
+                    <span class="ct-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
+                    <span class="ct-txt"><b>Email</b><span>{{ studio.email }}</span></span>
+                </a>
+                <a class="ct-card" href="{{ maps_url }}" target="_blank" rel="noopener">
+                    <span class="ct-ico"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg></span>
+                    <span class="ct-txt"><b>Studio <em>Address</em></b><span>{{ studio.address }}</span></span>
+                </a>
+                <div class="ct-card">
+                    <span class="ct-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+                    <span class="ct-txt"><b>Working Hours</b><span>{{ studio.hours }}</span></span>
+                </div>
             </div>
+
+            <!-- message form -->
+            <form class="ct-form fade-up" method="POST" action="{{ url_for('contact') }}">
+                <div class="ct-pill-head ct-form-head"><i></i><span>Send a Message</span><i></i></div>
+                <div class="ct-row2">
+                    <label class="ct-field">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.2" fill="currentColor"/><path d="M3.8 21c0-4.6 3.6-7.4 8.2-7.4s8.2 2.8 8.2 7.4z" fill="currentColor"/></svg>
+                        <input type="text" name="name" placeholder="Full Name *" aria-label="Full name" required value="{{ form.name or '' }}">
+                    </label>
+                    <label class="ct-field">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z" fill="currentColor"/><path d="m3 6 9 7 9-7" fill="none" stroke="#fff" stroke-width="1.6"/></svg>
+                        <input type="email" name="email" placeholder="Email Address *" aria-label="Email address" required value="{{ form.email or '' }}">
+                    </label>
+                </div>
+                <label class="ct-field ct-select">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="13" y="3" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="3" y="13" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="13" y="13" width="8" height="8" rx="1.5" fill="currentColor"/></svg>
+                    <span class="ct-pre">Inquiry Type</span>
+                    <select name="inquiry_type" aria-label="Inquiry type">
+                        <option value="">Select Type</option>
+                        {% for t in inquiry_types %}<option {% if form.inquiry_type == t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+                    </select>
+                </label>
+                <label class="ct-field">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z" fill="currentColor"/><circle cx="7.5" cy="7.5" r="1.6" fill="#fff"/></svg>
+                    <input type="text" name="subject" placeholder="Subject *" aria-label="Subject" required value="{{ form.subject or '' }}">
+                </label>
+                <label class="ct-field ct-area">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H8l-5 4V4a1 1 0 0 1 1-1z" fill="currentColor"/><circle cx="8" cy="10" r="1.3" fill="#fff"/><circle cx="12" cy="10" r="1.3" fill="#fff"/><circle cx="16" cy="10" r="1.3" fill="#fff"/></svg>
+                    <span class="ct-area-in">
+                        <span class="ct-pre">Your Message <i>*</i></span>
+                        <textarea name="message" rows="3" placeholder="Tell us about your inquiry..." aria-label="Your message" required>{{ form.message or '' }}</textarea>
+                    </span>
+                </label>
+                <div class="ct-send"><i></i>
+                    <button type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 11 22 3l-7 19-3.5-8z" fill="currentColor"/><path d="m11.5 14 4-5" stroke="#7a0f2c" stroke-width="1.6"/></svg>Send Inquiry</button>
+                <i></i></div>
+            </form>
+        </div>
+
+        <!-- visit the studio -->
+        <div class="ct-visit fade-up">
+            <figure class="ct-studio"><img src="{{ url_for('static', filename='img/ct-studio.jpg') }}" alt="Inside the Prabha Chris studio" loading="lazy"></figure>
+            <div class="ct-visit-txt">
+                <h2>Visit Our Studio</h2>
+                <p>Feel free to visit our studio and explore <br>more of our artwork in person.</p>
+                <a class="ct-dir" href="{{ maps_url }}" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg>
+                    Get Directions</a>
+            </div>
+            <a class="ct-map" href="{{ maps_url }}" target="_blank" rel="noopener" aria-label="Open the studio location in Google Maps">
+                <img src="{{ url_for('static', filename='img/ct-map.jpg') }}" alt="Map showing the Prabha Chris Studio" loading="lazy">
+                <span class="ct-expand"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            </a>
+        </div>
+
+        <!-- closing line -->
+        <div class="ct-closing fade-up">
+            <i></i><img src="{{ url_for('static', filename='img/logo-palette.png') }}" alt="" aria-hidden="true">
+            <p>Let’s Create Something Beautiful Together.</p><i></i>
         </div>
     </section>
     </main>

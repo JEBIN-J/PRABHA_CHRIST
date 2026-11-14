@@ -2075,7 +2075,7 @@
             .hero-eyebrow-text { font-size: 10px; letter-spacing: 0.2em; }
             .hero-name { order: 2; margin-top: 18px; }
             .hero-name .first { font-size: clamp(64px, 20vw, 110px); }
-            .hero-name .italic { font-size: clamp(88px, 27vw, 150px); margin: -22px 0 0 4px; -webkit-text-stroke-width: 1.2px; }
+            .hero-name .italic { font-size: clamp(80px, 24vw, 140px); margin: -2px 0 0 4px; -webkit-text-stroke-width: 1.2px; }
             .hero-subtitle { order: 3; width: auto; text-align: left; font-size: 19px; margin-top: 8px; }
             .hero-cta { order: 4; width: 250px; height: 54px; margin-top: 24px; font-size: 18px; gap: 14px; }
             .hero-portrait { order: 5; width: 100%; height: auto; aspect-ratio: 850 / 820; margin: 34px 0 -4px; }
@@ -2894,6 +2894,214 @@
             .ex-cards { grid-template-columns: 1fr; gap: 26px; }
             .ex-list { padding: 0 20px 80px; }
         }
+
+        /* =========================================================
+           CONTACT PAGE — painterly stage, info cards, form, studio, map
+           --u6 = 1px of the 1642px-wide mock, scaled to the viewport
+           ========================================================= */
+        .ct-stage { --u6: calc(100vw / 1642); position: relative; height: calc(var(--u6) * 389); overflow: hidden; }
+        .ct-stage::before { content: ''; position: absolute; inset: 0; background: #fcefe5 url('{{ url_for("static", filename="img/contact-bg.jpg") }}') center / 100% 100% no-repeat; -webkit-mask-image: linear-gradient(to bottom, #000 92%, transparent); mask-image: linear-gradient(to bottom, #000 92%, transparent); }
+        .ct-stage > * { position: absolute; z-index: 2; margin: 0; }
+        .ct-stage .crumbs { left: calc(var(--u6) * 104); top: calc(var(--u6) * 124); font-size: max(11px, calc(var(--u6) * 14)); letter-spacing: 0.22em; font-weight: 600; color: #3a1a1f; animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .ct-stage .crumbs a { color: #3a1a1f; }
+        .ct-title { left: calc(var(--u6) * 104); top: calc(var(--u6) * 133); font-family: 'Playfair Display', serif; font-weight: 700; font-size: calc(var(--u6) * 88); line-height: 1; white-space: nowrap; color: #3a0b16; letter-spacing: -0.012em; }
+        .ct-title em { font-family: 'Great Vibes', cursive; font-style: normal; font-weight: 400; font-size: 1.42em; display: inline-block; line-height: 1.2; padding: 0.3em 0.16em 0.26em 0.16em; margin: -0.3em -0.14em -0.26em -0.1em; background: linear-gradient(105deg, #7a0f2c 0%, #b3123f 55%, #c8164a 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .ct-swash { left: calc(var(--u6) * 104); top: calc(var(--u6) * 236); width: calc(var(--u6) * 320); height: calc(var(--u6) * 22); overflow: visible; }
+        .ct-sub { left: calc(var(--u6) * 104); top: calc(var(--u6) * 270); font-family: 'Playfair Display', serif; font-style: italic; font-size: calc(var(--u6) * 20.5); line-height: 1.27; color: #2f1418; white-space: nowrap; animation: heroFadeUp 1s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .ct-orn { left: calc(var(--u6) * 104); top: calc(var(--u6) * 334); width: calc(var(--u6) * 405); height: calc(var(--u6) * 42); display: flex; align-items: center; gap: calc(var(--u6) * 14); }
+        .ct-orn i { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, #c4914a); }
+        .ct-orn i:last-child { background: linear-gradient(90deg, #c4914a, transparent); }
+        .ct-orn img { width: calc(var(--u6) * 42); height: calc(var(--u6) * 42); }
+        .ct-art { display: none; }
+
+        .ct-body { position: relative; padding: 6px 4% 70px; }
+        .ct-side { position: absolute; top: 0; height: auto; width: 118px; mix-blend-mode: multiply; pointer-events: none; z-index: 0; }
+        .ct-side-l { left: 0; -webkit-mask-image: radial-gradient(ellipse 100% 60% at 0% 50%, #000 50%, transparent 95%); mask-image: radial-gradient(ellipse 100% 60% at 0% 50%, #000 50%, transparent 95%); }
+        .ct-side-r { right: 0; -webkit-mask-image: radial-gradient(ellipse 100% 60% at 100% 50%, #000 50%, transparent 95%); mask-image: radial-gradient(ellipse 100% 60% at 100% 50%, #000 50%, transparent 95%); }
+        .ct-grid { position: relative; z-index: 2; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 433fr 900fr; gap: 64px; align-items: start; }
+
+        .ct-pill-head { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 14px; }
+        .ct-pill-head span { padding: 10px 28px; border-radius: 999px; white-space: nowrap; font-family: 'Playfair Display', serif; font-weight: 500; font-size: 22px; color: #fff; background: linear-gradient(180deg, #800f30, #4d0717); box-shadow: 0 12px 22px -10px rgba(79, 8, 24, 0.7), inset 0 1px 0 rgba(255,255,255,.2); }
+        .ct-pill-head i { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, #c4914a); }
+        .ct-pill-head i:last-child { background: linear-gradient(90deg, #c4914a, transparent); }
+
+        .ct-card { display: flex; align-items: center; gap: 22px; padding: 14px 22px; margin-bottom: 10px; border-radius: 18px; text-decoration: none; background: rgba(255, 250, 246, 0.88); border: 1px solid rgba(255, 255, 255, 0.95); box-shadow: 0 14px 28px -18px rgba(91, 10, 32, 0.45); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s; }
+        a.ct-card:hover { transform: translateX(6px); box-shadow: 0 18px 32px -16px rgba(91, 10, 32, 0.55); }
+        .ct-ico { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: linear-gradient(180deg, #800f30, #4d0717); box-shadow: 0 8px 16px -8px rgba(79, 8, 24, 0.8); }
+        .ct-ico svg { width: 24px; height: 24px; }
+        .ct-txt { display: flex; flex-direction: column; font-family: 'Playfair Display', serif; }
+        .ct-txt b { font-weight: 500; font-size: 18px; color: #7d1030; }
+        .ct-txt b em { font-style: normal; color: #a3163c; }
+        .ct-txt > span { font-size: 18px; color: #2b0d10; margin-top: 2px; }
+
+        .ct-form { position: relative; padding: 34px 44px 30px; border-radius: 28px; background: rgba(255, 250, 246, 0.82); border: 1.5px solid rgba(196, 145, 74, 0.6); box-shadow: 0 30px 56px -34px rgba(91, 10, 32, 0.55); }
+        .ct-form-head { position: absolute; left: 140px; right: 140px; top: -24px; margin: 0; }
+        .ct-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .ct-field { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; padding: 0 18px; min-height: 46px; border-radius: 12px; background: rgba(255, 253, 251, 0.95); border: 1px solid rgba(196, 145, 74, 0.45); box-shadow: inset 0 1px 2px rgba(91, 10, 32, 0.06); transition: border-color 0.3s, box-shadow 0.3s; cursor: text; }
+        .ct-field:focus-within { border-color: #7d1030; box-shadow: 0 0 0 3px rgba(125, 16, 48, 0.12); }
+        .ct-field > svg { flex: none; width: 19px; height: 19px; color: #3a1a1f; }
+        .ct-field input, .ct-field select, .ct-field textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-family: 'Jost', sans-serif; font-size: 15.5px; color: #2b0d10; padding: 12px 0; cursor: auto; }
+        .ct-field input::placeholder, .ct-field textarea::placeholder { color: #4a3434; }
+        .ct-pre { font-family: 'Jost', sans-serif; font-size: 15.5px; color: #4a3434; white-space: nowrap; }
+        .ct-pre i { font-style: normal; color: #c8164a; }
+        .ct-select select { cursor: pointer; padding-left: 18px; font-weight: 500; }
+        .ct-area { align-items: flex-start; padding-top: 14px; padding-bottom: 6px; }
+        .ct-area > svg { margin-top: 2px; }
+        .ct-area-in { flex: 1; display: flex; flex-direction: column; }
+        .ct-area textarea { resize: vertical; min-height: 54px; padding: 6px 0; line-height: 1.5; }
+        .ct-area textarea::placeholder { color: #8a6e6c; }
+        .ct-send { display: flex; align-items: center; gap: 22px; margin-top: 10px; }
+        .ct-send i { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, #c4914a); }
+        .ct-send i:last-child { background: linear-gradient(90deg, #c4914a, transparent); }
+        .ct-send button { display: inline-flex; align-items: center; gap: 14px; padding: 0 50px; height: 50px; border-radius: 999px; border: 0; cursor: pointer; font-family: 'Playfair Display', serif; font-size: 20px; color: #fff; background: linear-gradient(180deg, #800f30, #4d0717); box-shadow: 0 14px 24px -10px rgba(79, 8, 24, 0.75), inset 0 1px 0 rgba(255,255,255,.2); transition: transform 0.3s, box-shadow 0.3s; }
+        .ct-send button svg { width: 20px; height: 20px; }
+        .ct-send button:hover { transform: translateY(-3px); box-shadow: 0 18px 28px -10px rgba(79, 8, 24, 0.85); }
+
+        .ct-visit { position: relative; z-index: 2; max-width: 1530px; margin: 36px auto 0; display: grid; grid-template-columns: 526fr 380fr 580fr; gap: 40px; align-items: center; }
+        .ct-studio { margin: 0; border-radius: 22px; overflow: hidden; border: 3px solid #c4914a; box-shadow: 0 0 0 5px rgba(255, 250, 246, 0.9), 0 24px 40px -24px rgba(91, 10, 32, 0.65); }
+        .ct-studio img, .ct-map img { display: block; width: 100%; aspect-ratio: 513 / 140; object-fit: cover; transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .ct-studio:hover img, .ct-map:hover img { transform: scale(1.04); }
+        .ct-visit-txt h2 { font-family: 'Great Vibes', cursive; font-weight: 400; font-size: 46px; line-height: 1.1; color: #9b1238; }
+        .ct-visit-txt p { margin: 8px 0 18px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; line-height: 1.35; color: #2f1418; }
+        .ct-dir { display: inline-flex; align-items: center; gap: 10px; padding: 10px 34px; border-radius: 999px; text-decoration: none; font-family: 'Playfair Display', serif; font-size: 15px; color: #2b0d10; background: rgba(255, 250, 246, 0.95); border: 1.5px solid #c4914a; box-shadow: 0 10px 20px -14px rgba(91, 10, 32, 0.5); transition: all 0.3s; }
+        .ct-dir svg { width: 16px; height: 16px; color: #3a1a1f; }
+        .ct-dir:hover { background: linear-gradient(180deg, #800f30, #4d0717); color: #fff; border-color: #7d1030; }
+        .ct-dir:hover svg { color: #f1cf91; }
+        .ct-map { position: relative; display: block; border-radius: 18px; overflow: hidden; border: 3px solid rgba(196, 145, 74, 0.8); box-shadow: 0 24px 40px -24px rgba(91, 10, 32, 0.6); }
+        .ct-map img { aspect-ratio: 567 / 141; }
+        .ct-expand { position: absolute; right: 12px; top: 10px; width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: #fff; color: #2b0d10; box-shadow: 0 4px 10px rgba(0,0,0,.2); }
+        .ct-expand svg { width: 18px; height: 18px; }
+
+        .ct-closing { position: relative; z-index: 2; max-width: 1200px; margin: 42px auto 0; display: flex; align-items: center; gap: 22px; }
+        .ct-closing > i { flex: 0 0 110px; height: 2px; background: linear-gradient(90deg, transparent, #c4914a); }
+        .ct-closing > i:last-child { background: linear-gradient(90deg, #c4914a, transparent); }
+        .ct-closing img { width: 40px; height: 40px; }
+        .ct-closing p { flex: 1; text-align: center; padding: 14px 20px; font-family: 'Great Vibes', cursive; font-size: 42px; line-height: 1.2; color: #8a1238; background: url('{{ url_for("static", filename="img/ct-brush.jpg") }}') center / 100% 100% no-repeat; mix-blend-mode: multiply; -webkit-mask-image: radial-gradient(ellipse 52% 60% at 50% 50%, #000 70%, transparent 100%); mask-image: radial-gradient(ellipse 52% 60% at 50% 50%, #000 70%, transparent 100%); }
+
+        @media (max-width: 1100px) {
+            .ct-grid { grid-template-columns: 1fr; gap: 50px; max-width: 760px; }
+            .ct-visit { grid-template-columns: 1fr; max-width: 760px; gap: 24px; text-align: center; }
+            .ct-visit-txt p br { display: none; }
+        }
+        @media (max-width: 900px) {
+            .page-main > section.ct-stage { --u6: 1px; height: auto; display: flex; flex-direction: column; padding: 112px 22px 20px; }
+            .ct-stage::before { background: linear-gradient(180deg, #fdf3ec 0%, #f9e2d6 100%); -webkit-mask-image: none; mask-image: none; }
+            .ct-stage > * { position: relative; left: auto; top: auto; }
+            .ct-stage .crumbs { font-size: 11px; left: auto; top: auto; }
+            .ct-title { font-size: clamp(44px, 13vw, 76px); margin-top: 18px; }
+            .ct-swash { width: 60vw; height: 20px; margin-left: 4px; }
+            .ct-sub { font-size: 18px; white-space: normal; line-height: 1.4; margin-top: 10px; }
+            .ct-sub br { display: none; }
+            .ct-orn { width: 240px; height: 36px; margin-top: 8px; }
+            .ct-orn img { width: 34px; height: 34px; }
+            .ct-art { display: block; width: calc(100% + 44px); margin: 14px -22px 0; mix-blend-mode: multiply; -webkit-mask-image: linear-gradient(to right, transparent, #000 16%); mask-image: linear-gradient(to right, transparent, #000 16%); }
+            .ct-body { padding: 20px 16px 60px; }
+            .ct-side { width: 70px; opacity: 0.6; }
+            .ct-form { padding: 40px 18px 24px; }
+            .ct-form-head { left: 20px; right: 20px; }
+            .ct-pill-head span { font-size: 19px; padding: 9px 22px; }
+            .ct-row2 { grid-template-columns: 1fr; gap: 0; }
+            .ct-select { flex-wrap: wrap; } .ct-select select { padding-left: 0; }
+            .ct-send button { padding: 0 30px; }
+            .ct-card { padding: 12px 16px; gap: 16px; }
+            .ct-txt > span { font-size: 16px; }
+            .ct-closing > i { flex-basis: 30px; }
+            .ct-closing img { display: none; }
+            .ct-closing p { font-size: 30px; }
+        }
+
+        /* =========================================================
+           SMALL-SCREEN HEADER + MENU (phones & tablets, up to 1100px)
+           ========================================================= */
+        .hamburger { border: 0; background: none; font: inherit; }
+        .mm-wash, .mm-deco, .mm-label, .mm-foot { display: none; }
+
+        @media (max-width: 1100px) {
+            nav, nav.scroll-scrolled {
+                top: 10px; left: 12px; right: 12px; height: auto;
+                padding: 7px 8px 7px 10px; gap: 10px;
+                justify-content: space-between; align-items: center;
+                background: rgba(252, 243, 236, 0.94);
+                -webkit-backdrop-filter: blur(16px) saturate(130%); backdrop-filter: blur(16px) saturate(130%);
+                border: 1px solid rgba(196, 145, 74, 0.45); border-radius: 999px;
+                box-shadow: 0 14px 30px -18px rgba(91, 10, 32, 0.55), inset 0 1px 0 #fff;
+                pointer-events: auto;
+            }
+            nav.scroll-scrolled { top: 8px; }
+            .nav-capsule { width: auto; height: auto; background: transparent; box-shadow: none; }
+            .nav-divider, .nav-links { display: none; }
+            .nav-logo { width: auto; padding: 0; gap: 10px; font-size: 20px; }
+            .logo-emblem { width: 44px; height: 44px; }
+            .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+            .nav-cta { display: inline-flex; width: auto; height: 42px; margin: 0; padding: 0 18px; gap: 8px; font-size: 14px; border-width: 1.5px; }
+            .nav-cta svg { width: 15px; height: 15px; }
+            .hamburger {
+                display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+                width: 46px; height: 46px; padding: 0; border-radius: 50%; cursor: pointer; flex: none;
+                background: linear-gradient(180deg, #800f30, #4d0717); border: 1.5px solid #c4914a;
+                box-shadow: 0 8px 16px -8px rgba(79, 8, 24, 0.8);
+            }
+            .hamburger span { width: 18px; height: 2px; border-radius: 2px; background: #fff; }
+            .hamburger span:nth-child(2) { width: 12px; align-self: center; transform: translateX(-3px); }
+            nav.open .hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+            nav.open .hamburger span:nth-child(2) { opacity: 0; transform: scale(0); }
+            nav.open .hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); box-shadow: none; }
+
+            /* full-screen menu panel */
+            .mobile-menu {
+                display: flex; align-items: stretch; justify-content: center; padding: 96px 22px 28px;
+                background: linear-gradient(180deg, #fdf4ed 0%, #f9e4d8 100%);
+                -webkit-backdrop-filter: none; backdrop-filter: none; overflow-y: auto;
+            }
+            .mm-wash { display: block; position: absolute; inset: 0; pointer-events: none; opacity: 0.9;
+                background: radial-gradient(ellipse 60% 35% at 100% 100%, rgba(222, 120, 130, 0.35), transparent 70%),
+                            radial-gradient(ellipse 50% 30% at 0% 75%, rgba(217, 168, 103, 0.3), transparent 70%); }
+            .mm-deco { display: block; position: absolute; left: -10px; top: -14px; width: 190px; mix-blend-mode: multiply; pointer-events: none; opacity: 0.9;
+                -webkit-mask-image: radial-gradient(ellipse 85% 85% at 0 0, #000 35%, transparent 72%); mask-image: radial-gradient(ellipse 85% 85% at 0 0, #000 35%, transparent 72%); }
+            .mm-inner { position: relative; z-index: 1; width: 100%; max-width: 460px; display: flex; flex-direction: column; }
+            .mm-label { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: #7d1030; }
+            .mm-label i { flex: 1; height: 1.5px; background: linear-gradient(90deg, transparent, #c4914a); }
+            .mm-label i:last-child { background: linear-gradient(90deg, #c4914a, transparent); }
+            .mm-links { display: flex; flex-direction: column; }
+            .mobile-menu .mm-link {
+                display: flex; align-items: center; gap: 16px; padding: 13px 6px; text-decoration: none;
+                font-family: 'Playfair Display', serif; font-style: normal; font-size: 26px; letter-spacing: 0; color: #2b0d10;
+                border-bottom: 1px solid rgba(196, 145, 74, 0.3);
+            }
+            .mobile-menu .mm-link:hover { transform: translateX(6px); color: #7d1030; text-shadow: none; }
+            .mm-num { font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.15em; color: #b9833f; width: 22px; }
+            .mm-name { flex: 1; }
+            .mm-go { font-style: normal; font-size: 18px; color: #b9833f; opacity: 0.6; transition: transform 0.3s, opacity 0.3s; }
+            .mobile-menu .mm-link:hover .mm-go { transform: translateX(4px); opacity: 1; }
+            .mobile-menu .mm-link.active { color: #7d1030; }
+            .mobile-menu .mm-link.active .mm-name { font-family: 'Great Vibes', cursive; font-size: 1.45em; line-height: 0.9; }
+            .mobile-menu .mm-link.active .mm-go { opacity: 1; color: #7d1030; }
+            .mobile-menu .mm-link:nth-child(1) { transition-delay: 0.08s; }
+            .mobile-menu .mm-link:nth-child(2) { transition-delay: 0.12s; }
+            .mobile-menu .mm-link:nth-child(3) { transition-delay: 0.16s; }
+            .mobile-menu .mm-link:nth-child(4) { transition-delay: 0.2s; }
+            .mobile-menu .mm-link:nth-child(5) { transition-delay: 0.24s; }
+            .mobile-menu .mm-link:nth-child(6) { transition-delay: 0.28s; }
+            .mobile-menu .mobile-cta {
+                display: inline-flex; align-items: center; justify-content: center; gap: 10px; align-self: stretch;
+                margin-top: 26px; padding: 15px 28px; border-radius: 999px;
+                font-family: 'Playfair Display', serif !important; font-style: normal; font-size: 18px !important; letter-spacing: 0.02em; text-transform: none;
+                color: #fff !important; background: linear-gradient(180deg, #800f30, #4d0717); border: 1.5px solid #c4914a;
+                box-shadow: 0 14px 26px -12px rgba(79, 8, 24, 0.75); transition-delay: 0.32s;
+            }
+            .mobile-menu .mobile-cta svg { width: 17px; height: 17px; }
+            .mm-foot { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 22px; font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; color: #6e4d4a; }
+            .mm-foot img { width: 30px; height: 30px; }
+        }
+        @media (max-width: 640px) {
+            .nav-cta { display: none; }
+            .nav-logo { font-size: 19px; }
+            .ab-title { font-size: clamp(38px, 11vw, 84px); }
+            .gal-title { font-size: clamp(38px, 11.5vw, 84px); }
+            .jr-title { font-size: clamp(38px, 11vw, 84px); }
+            .ct-title { font-size: clamp(36px, 11vw, 76px); }
+            .ex-title { font-size: clamp(32px, 9.6vw, 72px); }
+        }
     </style>
 </head>
 <body>
@@ -2905,14 +3113,27 @@
     <div class="cur-dot" id="curDot"></div>
     <div class="cur-ring" id="curRing"></div>
 
-    <div class="mobile-menu" id="mobileMenu">
-        <a href="{{ url_for('index') }}" onclick="closeMob()">Home</a>
-        <a href="{{ url_for('about') }}" onclick="closeMob()">About</a>
-        <a href="{{ url_for('gallery') }}" onclick="closeMob()">Gallery</a>
-        <a href="{{ url_for('journey') }}" onclick="closeMob()">Journey</a>
-        <a href="{{ url_for('exhibitions') }}" onclick="closeMob()">Exhibitions</a>
-        <a href="{{ url_for('contact') }}" onclick="closeMob()">Contact</a>
-        <a href="{{ url_for('contact') }}" class="mobile-cta" onclick="closeMob()">Private Inquiry</a>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <div class="mm-wash" aria-hidden="true"></div>
+        <img class="mm-deco" src="{{ url_for('static', filename='img/deco-corner.jpg') }}" alt="" aria-hidden="true">
+        <div class="mm-inner">
+            <div class="mm-label"><i></i><span>Menu</span><i></i></div>
+            <div class="mm-links">
+            <a class="mm-link{% if request.endpoint == 'index' %} active{% endif %}" href="{{ url_for('index') }}" onclick="closeMob()"><span class="mm-num">01</span><span class="mm-name">Home</span><i class="mm-go">→</i></a>
+            <a class="mm-link{% if request.endpoint == 'about' %} active{% endif %}" href="{{ url_for('about') }}" onclick="closeMob()"><span class="mm-num">02</span><span class="mm-name">About</span><i class="mm-go">→</i></a>
+            <a class="mm-link{% if request.endpoint == 'gallery' %} active{% endif %}" href="{{ url_for('gallery') }}" onclick="closeMob()"><span class="mm-num">03</span><span class="mm-name">Gallery</span><i class="mm-go">→</i></a>
+            <a class="mm-link{% if request.endpoint == 'journey' %} active{% endif %}" href="{{ url_for('journey') }}" onclick="closeMob()"><span class="mm-num">04</span><span class="mm-name">Journey</span><i class="mm-go">→</i></a>
+            <a class="mm-link{% if request.endpoint == 'exhibitions' %} active{% endif %}" href="{{ url_for('exhibitions') }}" onclick="closeMob()"><span class="mm-num">05</span><span class="mm-name">Exhibitions</span><i class="mm-go">→</i></a>
+            <a class="mm-link{% if request.endpoint == 'contact' %} active{% endif %}" href="{{ url_for('contact') }}" onclick="closeMob()"><span class="mm-num">06</span><span class="mm-name">Contact</span><i class="mm-go">→</i></a>
+            </div>
+            <a href="{{ url_for('contact') }}" class="mobile-cta" onclick="closeMob()">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.4" fill="currentColor"/><path d="M3.6 21.5c0-4.8 3.7-7.6 8.4-7.6s8.4 2.8 8.4 7.6z" fill="currentColor"/></svg>
+                Private Inquiry</a>
+            <div class="mm-foot">
+                <img src="{{ url_for('static', filename='img/logo-palette.png') }}" alt="" aria-hidden="true">
+                <span>Fine Artist · Est. 2013</span>
+            </div>
+        </div>
     </div>
 
     <nav>
@@ -2936,9 +3157,9 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.4" fill="currentColor"/><path d="M3.6 21.5c0-4.8 3.7-7.6 8.4-7.6s8.4 2.8 8.4 7.6z" fill="currentColor"/></svg>
                 <span>Private Inquiry</span>
             </a>
-            <div class="hamburger" id="burger" onclick="toggleMob()">
+            <button class="hamburger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMob()">
                 <span></span><span></span><span></span>
-            </div>
+            </button>
         </div>
     </nav>
 
@@ -3000,21 +3221,20 @@
         });
 
         // Mobile & Scroll Nav
-        function toggleMob() {
+        function setMob(open) {
             const nav = document.querySelector('nav');
             const menu = document.getElementById('mobileMenu');
-            if (menu.classList.contains('open')) {
-                menu.classList.remove('open');
-                nav.classList.remove('open');
-            } else {
-                menu.classList.add('open');
-                nav.classList.add('open');
-            }
+            const burger = document.getElementById('burger');
+            menu.classList.toggle('open', open);
+            nav.classList.toggle('open', open);
+            menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+            if (burger) { burger.setAttribute('aria-expanded', open); burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); }
+            document.documentElement.style.overflow = open ? 'hidden' : '';
         }
-        function closeMob() {
-            document.getElementById('mobileMenu').classList.remove('open');
-            document.querySelector('nav').classList.remove('open');
-        }
+        function toggleMob() { setMob(!document.getElementById('mobileMenu').classList.contains('open')); }
+        function closeMob() { setMob(false); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMob(); });
+        window.addEventListener('resize', () => { if (window.innerWidth > 1100) closeMob(); });
 
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
