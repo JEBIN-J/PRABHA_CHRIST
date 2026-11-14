@@ -1,0 +1,30 @@
+{# Prabha Chris monogram badge. Usage: {% from "_logo.html" import mark %}{{ mark('hdr') }} — the id keeps gradient ids unique per instance. #}
+{% macro mark(id='m', cls='') %}
+<svg class="pc-mark {{ cls }}" viewBox="0 0 120 120" role="img" aria-label="Prabha Chris logo">
+    <defs>
+        <radialGradient id="pcBg-{{ id }}" cx="38%" cy="30%" r="80%">
+            <stop offset="0" stop-color="#a3163c"/>
+            <stop offset=".55" stop-color="#6e0c27"/>
+            <stop offset="1" stop-color="#3d0612"/>
+        </radialGradient>
+        <linearGradient id="pcGold-{{ id }}" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#fbe7b8"/>
+            <stop offset=".45" stop-color="#d9a867"/>
+            <stop offset=".7" stop-color="#b9833f"/>
+            <stop offset="1" stop-color="#f3d79d"/>
+        </linearGradient>
+    </defs>
+    <circle cx="60" cy="60" r="57" fill="url(#pcBg-{{ id }})"/>
+    <circle cx="60" cy="60" r="53" fill="none" stroke="url(#pcGold-{{ id }})" stroke-width="2"/>
+    <g class="pc-orbit">
+        <circle cx="60" cy="60" r="47.5" fill="none" stroke="#f1cf91" stroke-opacity=".55" stroke-width=".9" stroke-dasharray="1.5 4.2"/>
+    </g>
+    <!-- brush stroke -->
+    <path d="M30 88 C48 80 70 82 92 74" fill="none" stroke="url(#pcGold-{{ id }})" stroke-width="3.2" stroke-linecap="round" opacity=".85"/>
+    <!-- monogram -->
+    <text x="27" y="80" font-family="'Great Vibes', 'Snell Roundhand', cursive" font-size="66" fill="url(#pcGold-{{ id }})">P</text>
+    <text x="55" y="83" font-family="'Great Vibes', 'Snell Roundhand', cursive" font-size="60" fill="#fbe7b8">C</text>
+    <!-- sparkle -->
+    <path class="pc-spark" d="M89 22 C89 28 91.5 30.5 97.5 30.5 C91.5 30.5 89 33 89 39 C89 33 86.5 30.5 80.5 30.5 C86.5 30.5 89 28 89 22Z" fill="#fbe7b8"/>
+</svg>
+{% endmacro %}

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
     <title>{% block title %}Prabha Chris — Fine Artist{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
@@ -1806,7 +1807,7 @@
             flex: none;
             display: flex;
             align-items: center;
-            width: calc(var(--u) * 1640);
+            width: calc(var(--u) * 1500);
             height: calc(var(--u) * 108);
             background: rgba(252, 243, 236, 0.96);
             border-radius: 999px;
@@ -1815,7 +1816,7 @@
 
         .nav-logo {
             flex: none;
-            width: calc(var(--u) * 500);
+            width: calc(var(--u) * 560);
             display: flex;
             align-items: center;
             gap: calc(var(--u) * 24);
@@ -3102,9 +3103,97 @@
             .ct-title { font-size: clamp(36px, 11vw, 76px); }
             .ex-title { font-size: clamp(32px, 9.6vw, 72px); }
         }
+
+        /* Private Inquiry = the contact link: highlight it on the Contact page */
+        .nav-cta.active { background: linear-gradient(180deg, #7a0f2c 0%, #4f0818 100%); color: #fff; border-color: #d6a45e; }
+        .nav-cta.active svg { color: #f1cf91; }
+
+        /* ---- header wordmark ---- */
+        .logo-name { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; }
+        .ln-main { font-family: 'Playfair Display', serif; font-weight: 600; font-size: calc(var(--u) * 46); letter-spacing: 0.01em; color: #3a0b16; white-space: nowrap; }
+        .ln-main em {
+            font-family: 'Great Vibes', cursive; font-style: normal; font-weight: 400; font-size: 1.55em;
+            display: inline-block; line-height: 1.2; padding: 0.22em 0.14em 0.2em 0.1em; margin: -0.3em -0.12em -0.24em -0.02em;
+            background: linear-gradient(105deg, #6b0d28 0%, #9b1238 60%, #b9833f 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .ln-tag { display: flex; align-items: center; gap: calc(var(--u) * 10); margin-top: calc(var(--u) * 7); font-family: 'Jost', sans-serif; font-weight: 500; font-size: max(9px, calc(var(--u) * 15)); letter-spacing: 0.3em; text-transform: uppercase; color: #b9833f; white-space: nowrap; }
+        .ln-tag i { display: block; width: max(12px, calc(var(--u) * 24)); height: 1px; background: #c4914a; }
+        .nav-logo:hover .ln-main em { filter: brightness(1.1); }
+        @media (max-width: 1100px) {
+            .ln-main { font-size: 21px; }
+            .ln-tag { font-size: 8.5px; gap: 6px; margin-top: 3px; letter-spacing: 0.28em; }
+            .ln-tag i { width: 12px; }
+        }
+        @media (max-width: 380px) { .ln-tag { display: none; } }
+
+        /* ---- header wordmark: extra polish ---- */
+        .ln-badge { position: relative; display: block; flex: none; border-radius: 50%; }
+        .ln-badge::before {
+            content: ''; position: absolute; inset: calc(var(--u) * -6); border-radius: 50%; padding: 2px;
+            background: conic-gradient(from 0deg, #f3d79d, #b9833f, #f7e2b6, #9b1238, #f3d79d);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+                    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+            animation: lnRing 12s linear infinite;
+        }
+        .ln-badge::after { content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 6px 16px -6px rgba(125, 16, 48, 0.55); pointer-events: none; }
+        .ln-badge .logo-emblem { position: relative; z-index: 1; }
+        .ln-spark { position: absolute; z-index: 2; right: -6%; top: -8%; font-size: calc(var(--u) * 22); line-height: 1; color: #c4914a; text-shadow: 0 0 6px rgba(241, 207, 145, 0.9); animation: lnTwinkle 2.8s ease-in-out infinite; }
+        @keyframes lnRing { to { transform: rotate(360deg); } }
+        @keyframes lnTwinkle { 0%, 100% { transform: scale(0.7) rotate(0deg); opacity: 0.55; } 50% { transform: scale(1.15) rotate(20deg); opacity: 1; } }
+        .nav-logo:hover .logo-emblem { transform: rotate(-12deg) scale(1.06); }
+
+        .ln-main { position: relative; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }
+        .ln-main em { text-shadow: none; background-size: 320% 100%; animation: lnShimmer 7s ease-in-out infinite; }
+        .ln-main em { background-image: linear-gradient(105deg, #6b0d28 0%, #8f1236 42%, #d9a867 50%, #8f1236 58%, #6b0d28 100%); }
+        @keyframes lnShimmer { 0%, 30% { background-position: 100% 0; } 60%, 100% { background-position: 0% 0; } }
+        .ln-swash { position: absolute; right: calc(var(--u) * -10); bottom: calc(var(--u) * -12); width: 62%; height: calc(var(--u) * 14); overflow: visible; pointer-events: none; }
+        .ln-tag b { font-weight: 400; font-size: 0.7em; color: #9b1238; margin: 0 0.15em; letter-spacing: 0; }
+        .nav-logo:hover .ln-tag { color: #9b1238; }
+        .ln-tag { transition: color 0.3s; }
+        @media (max-width: 1100px) {
+            .ln-badge::before { inset: -4px; }
+            .ln-spark { font-size: 13px; }
+            .ln-swash { right: -6px; bottom: -8px; height: 9px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .ln-badge::before, .ln-spark, .ln-main em { animation: none; } }
+
+        /* ---- new monogram logo ---- */
+        .pc-mark { display: block; overflow: visible; }
+        .pc-mark text { font-family: 'Great Vibes', cursive; }
+        .pc-orbit { transform-origin: 60px 60px; animation: lnRing 30s linear infinite; }
+        .pc-spark { transform-origin: 89px 30.5px; animation: pcTwinkle 3s ease-in-out infinite; }
+        @keyframes pcTwinkle { 0%, 100% { transform: scale(0.7); opacity: 0.6; } 50% { transform: scale(1.15); opacity: 1; } }
+        .ln-badge::before, .ln-spark { display: none; }
+        .ln-badge::after { box-shadow: 0 8px 18px -6px rgba(79, 8, 24, 0.6), 0 0 0 3px rgba(255, 248, 242, 0.9), 0 0 0 4.5px rgba(196, 145, 74, 0.55); }
+        .nav-logo:hover .pc-mark { transform: rotate(-8deg) scale(1.05); }
+        .pc-mark.logo-emblem { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .foot-mark { width: 64px; height: 64px; flex: none; }
+
+        /* wordmark: engraved capitals + script */
+        .ln-caps { font-family: 'Cinzel', 'Playfair Display', serif; font-weight: 600; font-size: 0.82em; letter-spacing: 0.14em; text-transform: uppercase; color: #3a0b16; }
+        .ln-main { display: flex; align-items: baseline; gap: 0.12em; }
+        .ln-main em { font-size: 1.6em; margin-left: -0.04em; }
+        @media (prefers-reduced-motion: reduce) { .pc-orbit, .pc-spark { animation: none; } }
+
+        /* ---- fit logo + wordmark inside the capsule (equal space top & bottom) ---- */
+        .nav-logo { gap: calc(var(--u) * 20); padding-left: calc(var(--u) * 14); }
+        .nav-logo .logo-emblem { width: calc(var(--u) * 78); height: calc(var(--u) * 78); }
+        .ln-badge::after { box-shadow: 0 6px 14px -6px rgba(79, 8, 24, 0.55), 0 0 0 calc(var(--u) * 4) rgba(255, 248, 242, 0.9), 0 0 0 calc(var(--u) * 6) rgba(196, 145, 74, 0.55); }
+        .logo-name { justify-content: center; height: calc(var(--u) * 84); }
+        .ln-main { font-size: calc(var(--u) * 38); line-height: 1; align-items: center; height: calc(var(--u) * 46); }
+        .ln-main em { font-size: 1.42em; line-height: 1; padding: 0.06em 0.12em 0.12em 0.08em; margin: -0.06em -0.1em -0.12em -0.04em; transform: translateY(0.04em); }
+        .ln-tag { margin-top: calc(var(--u) * 6); font-size: max(8.5px, calc(var(--u) * 13)); }
+        @media (max-width: 1100px) {
+            .nav-logo .logo-emblem { width: 42px; height: 42px; }
+            .ln-badge::after { box-shadow: 0 6px 12px -6px rgba(79, 8, 24, 0.55), 0 0 0 2.5px rgba(255, 248, 242, 0.9), 0 0 0 3.5px rgba(196, 145, 74, 0.55); }
+            .logo-name { height: 44px; }
+            .ln-main { font-size: 18px; height: 24px; }
+            .ln-tag { margin-top: 3px; font-size: 8px; }
+        }
     </style>
 </head>
 <body>
+    {% from "_logo.html" import mark %}
 
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
@@ -3124,9 +3213,8 @@
             <a class="mm-link{% if request.endpoint == 'gallery' %} active{% endif %}" href="{{ url_for('gallery') }}" onclick="closeMob()"><span class="mm-num">03</span><span class="mm-name">Gallery</span><i class="mm-go">→</i></a>
             <a class="mm-link{% if request.endpoint == 'journey' %} active{% endif %}" href="{{ url_for('journey') }}" onclick="closeMob()"><span class="mm-num">04</span><span class="mm-name">Journey</span><i class="mm-go">→</i></a>
             <a class="mm-link{% if request.endpoint == 'exhibitions' %} active{% endif %}" href="{{ url_for('exhibitions') }}" onclick="closeMob()"><span class="mm-num">05</span><span class="mm-name">Exhibitions</span><i class="mm-go">→</i></a>
-            <a class="mm-link{% if request.endpoint == 'contact' %} active{% endif %}" href="{{ url_for('contact') }}" onclick="closeMob()"><span class="mm-num">06</span><span class="mm-name">Contact</span><i class="mm-go">→</i></a>
             </div>
-            <a href="{{ url_for('contact') }}" class="mobile-cta" onclick="closeMob()">
+            <a href="{{ url_for('contact') }}" class="mobile-cta{% if request.endpoint == 'contact' %} active{% endif %}" onclick="closeMob()">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.4" fill="currentColor"/><path d="M3.6 21.5c0-4.8 3.7-7.6 8.4-7.6s8.4 2.8 8.4 7.6z" fill="currentColor"/></svg>
                 Private Inquiry</a>
             <div class="mm-foot">
@@ -3139,8 +3227,12 @@
     <nav>
         <div class="nav-capsule">
             <a class="nav-logo" href="{{ url_for('index') }}" aria-label="Prabha Chris — home">
-                <img class="logo-emblem" src="{{ url_for('static', filename='img/logo-palette.png') }}" alt="">
-                <span class="logo-name">Prabha <em>Chris</em></span>
+                <span class="ln-badge">{{ mark('hdr', 'logo-emblem') }}</span>
+                <span class="logo-name">
+                    <span class="ln-main"><span class="ln-caps">Prabha</span> <em>Chris</em>
+                    </span>
+                    <span class="ln-tag"><i></i>Fine Artist<b>◆</b>Est. 2013<i></i></span>
+                </span>
             </a>
             <span class="nav-divider" aria-hidden="true"></span>
             <ul class="nav-links">
@@ -3149,11 +3241,10 @@
                 <li><a href="{{ url_for('gallery') }}"{% if request.endpoint == 'gallery' %} class="active"{% endif %}>Gallery</a></li>
                 <li><a href="{{ url_for('journey') }}"{% if request.endpoint == 'journey' %} class="active"{% endif %}>Journey</a></li>
                 <li><a href="{{ url_for('exhibitions') }}"{% if request.endpoint == 'exhibitions' %} class="active"{% endif %}>Exhibitions</a></li>
-                <li><a href="{{ url_for('contact') }}"{% if request.endpoint == 'contact' %} class="active"{% endif %}>Contact</a></li>
             </ul>
         </div>
         <div class="nav-actions">
-            <a href="{{ url_for('contact') }}" class="nav-cta">
+            <a href="{{ url_for('contact') }}" class="nav-cta{% if request.endpoint == 'contact' %} active{% endif %}">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.4" fill="currentColor"/><path d="M3.6 21.5c0-4.8 3.7-7.6 8.4-7.6s8.4 2.8 8.4 7.6z" fill="currentColor"/></svg>
                 <span>Private Inquiry</span>
             </a>
@@ -3177,7 +3268,7 @@
         <div class="foot-grid">
             <div>
                 <a class="foot-brand" href="{{ url_for('index') }}">
-                    <img src="{{ url_for('static', filename='img/logo-palette.png') }}" alt="">
+                    {{ mark('ftr', 'foot-mark') }}
                     <span>Prabha <em>Chris</em></span>
                 </a>
                 <p class="foot-blurb">Fine artist exploring the intersection of emotion and digital form — oil, charcoal, watercolor and light. Est. 2013.</p>
