@@ -1,11 +1,21 @@
 import os
+import re
+import secrets
 import sqlite3
+import sys
 import time
-from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from functools import wraps
+from getpass import getpass
+
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, session, g
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkeyforprabhachris'
+# Set a long random SECRET_KEY in the environment in production.
+app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkeyforprabhachris')
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB upload limit
 
@@ -60,6 +70,21 @@ def init_db():
         )
     ''')
 
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+            password_hash TEXT NOT NULL,
+            is_superuser INTEGER NOT NULL DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP
+        )
+    ''')
+    # inquiries.is_read was added later — add it to existing databases
+    cols = [r['name'] for r in conn.execute('PRAGMA table_info(inquiries)')]
+    if 'is_read' not in cols:
+        conn.execute('ALTER TABLE inquiries ADD COLUMN is_read INTEGER NOT NULL DEFAULT 0')
+
     # Add default categories if empty
     cursor = conn.cursor()
     cursor.execute('SELECT COUNT(*) FROM categories')
@@ -93,6 +118,130 @@ def set_setting(key, value):
 def inject_hero_image():
     # Path (relative to /static) of the portrait shown in the home page hero.
     return {'hero_image': get_setting('hero_image', DEFAULT_HERO_IMAGE)}
+
+
+# ---------------------------------------------------------------- auth
+def current_user():
+    if 'user' not in g:
+        g.user = None
+        uid = session.get('user_id')
+        if uid:
+            conn = get_db_connection()
+            g.user = conn.execute('SELECT id, username, is_superuser FROM users WHERE id = ?', (uid,)).fetchone()
+            conn.close()
+    return g.user
+
+
+def superuser_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        user = current_user()
+        if user is None:
+            return redirect(url_for('login', next=request.path))
+        if not user['is_superuser']:
+            abort(403)
+        return view(*args, **kwargs)
+    return wrapped
+
+
+def csrf_token():
+    if '_csrf' not in session:
+        session['_csrf'] = secrets.token_urlsafe(32)
+    return session['_csrf']
+
+
+@app.before_request
+def check_csrf():
+    # Every POST except the public contact form must carry the session's CSRF token.
+    if request.method == 'POST' and request.endpoint not in ('contact',):
+        if not secrets.compare_digest(request.form.get('_csrf', ''), session.get('_csrf', '-')):
+            abort(400, 'Your session expired — please reload the page and try again.')
+
+
+def unread_messages():
+    conn = get_db_connection()
+    n = conn.execute('SELECT COUNT(*) FROM inquiries WHERE is_read = 0').fetchone()[0]
+    conn.close()
+    return n
+
+
+@app.context_processor
+def inject_auth():
+    return {'current_user': current_user(), 'csrf_token': csrf_token, 'unread_messages': unread_messages}
+
+
+def create_superuser(username, password):
+    conn = get_db_connection()
+    existing = conn.execute('SELECT id FROM users WHERE username = ?', (username,)).fetchone()
+    pw_hash = generate_password_hash(password)
+    if existing:
+        conn.execute('UPDATE users SET password_hash = ?, is_superuser = 1 WHERE id = ?', (pw_hash, existing['id']))
+    else:
+        conn.execute('INSERT INTO users (username, password_hash, is_superuser) VALUES (?, ?, 1)', (username, pw_hash))
+    conn.commit()
+    conn.close()
+    return bool(existing)
+
+
+@app.cli.command('createsuperuser')
+def createsuperuser_command():
+    """Create (or reset) an admin account:  flask --app app createsuperuser"""
+    _createsuperuser_prompt()
+
+
+def _createsuperuser_prompt():
+    username = input('Username: ').strip()
+    while not re.fullmatch(r'[A-Za-z0-9_.@-]{3,40}', username or ''):
+        username = input('Username (3-40 letters, digits or _ . @ -): ').strip()
+    while True:
+        pw = getpass('Password: ')
+        if len(pw) < 8:
+            print('Password must be at least 8 characters.')
+            continue
+        if getpass('Password (again): ') != pw:
+            print('Passwords did not match.')
+            continue
+        break
+    updated = create_superuser(username, pw)
+    print('Superuser "%s" %s.' % (username, 'updated' if updated else 'created'))
+
+
+def safe_next(target):
+    # only allow redirects back into this site
+    return target if target and target.startswith('/') and not target.startswith('//') else None
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user() and current_user()['is_superuser']:
+        return redirect(url_for('dashboard'))
+    error = None
+    username = ''
+    if request.method == 'POST':
+        username = (request.form.get('username') or '').strip()
+        password = request.form.get('password') or ''
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        if user and check_password_hash(user['password_hash'], password) and user['is_superuser']:
+            conn.execute('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?', (user['id'],))
+            conn.commit()
+            conn.close()
+            session.clear()
+            session['user_id'] = user['id']
+            session.permanent = bool(request.form.get('remember'))
+            flash('Welcome back, %s!' % user['username'])
+            return redirect(safe_next(request.form.get('next')) or url_for('dashboard'))
+        conn.close()
+        time.sleep(0.6)  # slow down password guessing
+        error = 'Invalid username or password.'
+    return render_template('login.html', error=error, username=username, next=request.args.get('next', ''))
+
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    flash('You have been logged out.')
+    return redirect(url_for('index'))
 
 
 ARTWORK_SQL = ('SELECT a.*, c.name AS category_name FROM artworks a '
@@ -171,59 +320,176 @@ def category_view(category_id):
     return render_template('category.html', artworks=artworks, category=category, categories=categories)
 
 
-# Hidden: change the hero portrait on the home page
-@app.route('/secret-art-add-prabha/hero', methods=['POST'])
-def secret_hero():
-    file = request.files.get('file')
-    if not file or file.filename == '' or not allowed_file(file.filename):
-        flash('Please choose a PNG, JPG or GIF image for the hero portrait.')
-        return redirect(url_for('secret_add'))
-
+# ---------------------------------------------------------------- admin dashboard
+def save_upload(file, prefix):
     ext = file.filename.rsplit('.', 1)[1].lower()
-    filename = 'hero_portrait_%d.%s' % (int(time.time()), ext)  # new name busts browser cache
+    base = secure_filename(file.filename.rsplit('.', 1)[0])[:40] or 'image'
+    filename = '%s_%d_%s.%s' % (prefix, int(time.time()), base, ext)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    set_setting('hero_image', 'uploads/' + filename)
-    flash('Hero portrait updated!')
-    return redirect(url_for('index'))
+    return filename
 
 
-@app.route('/secret-art-add-prabha/hero/reset', methods=['POST'])
-def secret_hero_reset():
-    set_setting('hero_image', DEFAULT_HERO_IMAGE)
-    flash('Hero portrait reset to the default.')
-    return redirect(url_for('index'))
+@app.route('/dashboard')
+@superuser_required
+def dashboard():
+    conn = get_db_connection()
+    stats = {
+        'artworks': conn.execute('SELECT COUNT(*) FROM artworks').fetchone()[0],
+        'categories': conn.execute('SELECT COUNT(*) FROM categories').fetchone()[0],
+        'inquiries': conn.execute('SELECT COUNT(*) FROM inquiries').fetchone()[0],
+        'unread': conn.execute('SELECT COUNT(*) FROM inquiries WHERE is_read = 0').fetchone()[0],
+    }
+    by_cat = conn.execute('SELECT c.name, COUNT(a.id) AS n FROM categories c LEFT JOIN artworks a '
+                          'ON a.category_id = c.id GROUP BY c.id ORDER BY c.id').fetchall()
+    month = "strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')"
+    stats['art_month'] = conn.execute('SELECT COUNT(*) FROM artworks WHERE ' + month).fetchone()[0]
+    stats['inq_month'] = conn.execute('SELECT COUNT(*) FROM inquiries WHERE ' + month).fetchone()[0]
+    recent_art = conn.execute(ARTWORK_SQL + ' ORDER BY a.created_at DESC, a.id DESC LIMIT 6').fetchall()
+    recent_inq = conn.execute('SELECT * FROM inquiries ORDER BY created_at DESC, id DESC LIMIT 5').fetchall()
+    conn.close()
+    hour = time.localtime().tm_hour
+    greeting = 'Good morning' if hour < 12 else 'Good afternoon' if hour < 17 else 'Good evening'
+    return render_template('admin/dashboard.html', stats=stats, by_cat=by_cat, greeting=greeting,
+                           today=time.strftime('%A, %d %B %Y'),
+                           recent_art=recent_art, recent_inq=recent_inq, active='dashboard')
 
 
-# Hidden upload page
-@app.route('/secret-art-add-prabha', methods=['GET', 'POST'])
-def secret_add():
+@app.route('/dashboard/artworks', methods=['GET', 'POST'])
+@superuser_required
+def dash_artworks():
     conn = get_db_connection()
     if request.method == 'POST':
-        title = request.form.get('title')
+        title = (request.form.get('title') or '').strip()
         category_id = request.form.get('category_id')
         file = request.files.get('file')
-        
         if not title or not file or file.filename == '':
-            flash('Title and Image are required!')
-            return redirect(request.url)
-        
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            
+            flash('Please give the artwork a title and choose an image.')
+        elif not allowed_file(file.filename):
+            flash('Images must be PNG, JPG or GIF.')
+        else:
+            filename = save_upload(file, 'art')
             conn.execute('INSERT INTO artworks (title, image_path, category_id) VALUES (?, ?, ?)',
                          (title, filename, category_id))
             conn.commit()
-            conn.close()
-            flash('Art added successfully!')
-            return redirect(url_for('index'))
-            
+            flash('"%s" was added to the gallery.' % title)
+        conn.close()
+        return redirect(url_for('dash_artworks'))
+    artworks = conn.execute(ARTWORK_SQL + ' ORDER BY a.created_at DESC, a.id DESC').fetchall()
     categories = conn.execute('SELECT * FROM categories').fetchall()
-    inquiries = conn.execute('SELECT * FROM inquiries ORDER BY created_at DESC, id DESC LIMIT 50').fetchall()
     conn.close()
-    return render_template('secret_add.html', categories=categories, inquiries=inquiries)
+    return render_template('admin/artworks.html', artworks=artworks, categories=categories, active='artworks')
+
+
+@app.route('/dashboard/artworks/<int:art_id>/edit', methods=['POST'])
+@superuser_required
+def dash_artwork_edit(art_id):
+    title = (request.form.get('title') or '').strip()
+    if not title:
+        flash('Title cannot be empty.')
+        return redirect(url_for('dash_artworks'))
+    conn = get_db_connection()
+    conn.execute('UPDATE artworks SET title = ?, category_id = ? WHERE id = ?',
+                 (title, request.form.get('category_id'), art_id))
+    conn.commit()
+    conn.close()
+    flash('Artwork updated.')
+    return redirect(url_for('dash_artworks'))
+
+
+@app.route('/dashboard/artworks/<int:art_id>/delete', methods=['POST'])
+@superuser_required
+def dash_artwork_delete(art_id):
+    conn = get_db_connection()
+    art = conn.execute('SELECT * FROM artworks WHERE id = ?', (art_id,)).fetchone()
+    if art:
+        conn.execute('DELETE FROM artworks WHERE id = ?', (art_id,))
+        conn.commit()
+        # remove the image file only if it was uploaded from the dashboard and nothing else uses it
+        still_used = conn.execute('SELECT 1 FROM artworks WHERE image_path = ?', (art['image_path'],)).fetchone()
+        if art['image_path'].startswith('art_') and not still_used:
+            try:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], art['image_path']))
+            except OSError:
+                pass
+        flash('"%s" was removed from the gallery.' % art['title'])
+    conn.close()
+    return redirect(url_for('dash_artworks'))
+
+
+@app.route('/dashboard/messages')
+@superuser_required
+def dash_messages():
+    show = request.args.get('show', 'all')
+    conn = get_db_connection()
+    sql = 'SELECT * FROM inquiries' + (' WHERE is_read = 0' if show == 'unread' else '') + ' ORDER BY created_at DESC, id DESC'
+    inquiries = conn.execute(sql).fetchall()
+    conn.close()
+    return render_template('admin/messages.html', inquiries=inquiries, show=show, active='messages')
+
+
+@app.route('/dashboard/messages/<int:msg_id>/<action>', methods=['POST'])
+@superuser_required
+def dash_message_action(msg_id, action):
+    conn = get_db_connection()
+    if action == 'read':
+        conn.execute('UPDATE inquiries SET is_read = 1 WHERE id = ?', (msg_id,))
+    elif action == 'unread':
+        conn.execute('UPDATE inquiries SET is_read = 0 WHERE id = ?', (msg_id,))
+    elif action == 'delete':
+        conn.execute('DELETE FROM inquiries WHERE id = ?', (msg_id,))
+        flash('Message deleted.')
+    else:
+        conn.close()
+        abort(404)
+    conn.commit()
+    conn.close()
+    show = request.form.get('show') if request.form.get('show') in ('all', 'unread') else 'all'
+    return redirect(url_for(request.form.get('back') == 'dashboard' and 'dashboard' or 'dash_messages', **({} if request.form.get('back') == 'dashboard' else {'show': show})))
+
+
+@app.route('/dashboard/settings', methods=['GET', 'POST'])
+@superuser_required
+def dash_settings():
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'hero':
+            file = request.files.get('file')
+            if not file or file.filename == '' or not allowed_file(file.filename):
+                flash('Please choose a PNG, JPG or GIF image for the hero portrait.')
+            else:
+                set_setting('hero_image', 'uploads/' + save_upload(file, 'hero'))
+                flash('Home page portrait updated.')
+        elif action == 'hero_reset':
+            set_setting('hero_image', DEFAULT_HERO_IMAGE)
+            flash('Home page portrait reset to the default.')
+        elif action == 'password':
+            user = current_user()
+            conn = get_db_connection()
+            row = conn.execute('SELECT password_hash FROM users WHERE id = ?', (user['id'],)).fetchone()
+            new = request.form.get('new_password') or ''
+            if not check_password_hash(row['password_hash'], request.form.get('current_password') or ''):
+                flash('Your current password is not correct.')
+            elif len(new) < 8 or new != request.form.get('confirm_password'):
+                flash('New password must be at least 8 characters and match the confirmation.')
+            else:
+                conn.execute('UPDATE users SET password_hash = ? WHERE id = ?', (generate_password_hash(new), user['id']))
+                conn.commit()
+                flash('Password changed.')
+            conn.close()
+        return redirect(url_for('dash_settings'))
+    return render_template('admin/settings.html', active='settings')
+
+
+# Old hidden admin address — now behind login
+@app.route('/secret-art-add-prabha')
+def secret_add():
+    return redirect(url_for('dashboard'))
+
 
 init_db()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    if len(sys.argv) > 1 and sys.argv[1] == 'createsuperuser':
+        _createsuperuser_prompt()      # python app.py createsuperuser
+    else:
+        app.run(debug=True, port=5001)

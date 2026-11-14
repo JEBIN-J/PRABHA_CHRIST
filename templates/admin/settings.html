@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+{% block title %}Settings{% endblock %}
+{% block kicker %}Website &amp; account{% endblock %}
+{% block heading %}Studio <em>Settings</em>{% endblock %}
+{% block content %}
+<div class="ad-grid2">
+    <section class="ad-card">
+        <div class="ad-card-head"><h2>Home page <em>portrait</em></h2></div>
+        <p class="ad-help">The photo shown inside the brush-stroke frame at the top of the home page.</p>
+        <div class="ad-portrait">
+            <div class="ad-hero-prev"><img src="{{ url_for('static', filename=hero_image) }}" alt="Current home page portrait"><span class="ad-pill solid">Current</span></div>
+            <div class="ad-portrait-forms">
+                <form class="ad-form" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="hero">
+                    <label>Upload a new portrait<input type="file" name="file" accept="image/png,image/jpeg,image/gif" required></label>
+                    <button class="ad-btn wide" type="submit">Change portrait</button>
+                </form>
+                <form method="POST">
+                    <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="hero_reset">
+                    <button class="ad-btn ghost wide" type="submit">Reset to default</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <section class="ad-card">
+        <div class="ad-card-head"><h2>Change <em>password</em></h2></div>
+        <p class="ad-help">Signed in as <b>{{ current_user.username }}</b>. Use at least 8 characters.</p>
+        <form class="ad-form" method="POST">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="password">
+            <label>Current password<input type="password" name="current_password" autocomplete="current-password" required></label>
+            <label>New password<input type="password" name="new_password" minlength="8" autocomplete="new-password" required></label>
+            <label>Confirm new password<input type="password" name="confirm_password" minlength="8" autocomplete="new-password" required></label>
+            <button class="ad-btn wide" type="submit">Update password</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

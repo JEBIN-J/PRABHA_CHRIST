@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+{% block title %}Messages{% endblock %}
+{% block kicker %}Contact form{% endblock %}
+{% block heading %}Visitor <em>Messages</em>{% endblock %}
+{% block actions %}
+<div class="ad-tabs">
+    <a href="{{ url_for('dash_messages', show='all') }}" class="{{ 'on' if show == 'all' }}">All</a>
+    <a href="{{ url_for('dash_messages', show='unread') }}" class="{{ 'on' if show == 'unread' }}">Unread{% if unread %} <b>{{ unread }}</b>{% endif %}</a>
+</div>
+{% endblock %}
+{% block content %}
+<div class="ad-msg-list">
+    {% for q in inquiries %}
+    <article class="ad-mcard {{ 'unread' if not q.is_read }}" id="m{{ q.id }}">
+        <header>
+            <span class="ad-avatar sm">{{ q.name[:1] | upper }}</span>
+            <div class="ad-mcard-who">
+                <b>{{ q.name }}</b>
+                <a href="mailto:{{ q.email }}">{{ q.email }}</a>
+            </div>
+            <div class="ad-mcard-meta">
+                {% if not q.is_read %}<span class="ad-pill new">New</span>{% endif %}
+                {% if q.inquiry_type %}<span class="ad-pill">{{ q.inquiry_type }}</span>{% endif %}
+                <time>{{ q.created_at[:16] }}</time>
+            </div>
+        </header>
+        <h3>{{ q.subject }}</h3>
+        <p>{{ q.message }}</p>
+        <footer>
+            <a class="ad-btn sm" href="mailto:{{ q.email }}?subject={{ ('Re: ' ~ q.subject) | urlencode }}"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>Reply by email</a>
+            {% for act, label in ([('unread', 'Mark unread')] if q.is_read else [('read', 'Mark as read')]) + [('delete', 'Delete')] %}
+            <form method="POST" action="{{ url_for('dash_message_action', msg_id=q.id, action=act) }}" {% if act == 'delete' %}onsubmit="return confirm('Delete this message from {{ q.name }}?')"{% endif %}>
+                <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="show" value="{{ show }}">
+                <button class="ad-btn sm ghost {{ 'danger' if act == 'delete' }}" type="submit">{{ label }}</button>
+            </form>
+            {% endfor %}
+        </footer>
+    </article>
+    {% else %}
+    <section class="ad-card"><div class="ad-empty">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 16h48v28H22l-14 10z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M18 26h28M18 34h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <b>{{ 'No unread messages' if show == 'unread' else 'No messages yet' }}</b>
+        <span>{{ 'You are all caught up.' if show == 'unread' else 'Messages sent from the Contact page will appear here.' }}</span>
+    </div></section>
+    {% endfor %}
+</div>
+{% endblock %}

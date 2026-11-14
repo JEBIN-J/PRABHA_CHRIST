@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}Studio Login — Prabha Chris{% endblock %}
+
+{% block content %}
+{% from "_logo.html" import mark %}
+<main class="page-main">
+<section class="lg-stage">
+    <div class="lg-wrap fade-up visible">
+        <!-- artwork side -->
+        <aside class="lg-art" aria-hidden="true">
+            <img class="lg-art-img" src="{{ url_for('static', filename='img/about-art.jpg') }}" alt="">
+            <div class="lg-art-shade"></div>
+            <div class="lg-art-top">{{ mark('lgart', 'lg-art-mark') }}<span>Prabha <em>Chris</em></span></div>
+            <div class="lg-art-quote">
+                <span class="lg-q">“</span>
+                <p>Every stroke is a <em>deliberate</em> choice.</p>
+                <small>— Prabha Chris</small>
+            </div>
+        </aside>
+
+        <!-- form side -->
+        <div class="lg-panel">
+            <p class="lg-kicker"><i></i>Studio Access<i></i></p>
+            <h1 class="lg-title">Welcome <em>back</em></h1>
+            <p class="lg-sub">Sign in to manage your gallery, messages and website.</p>
+
+            {% if error %}<div class="lg-error" role="alert">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 7v6M12 16.5v.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>
+                {{ error }}</div>{% endif %}
+
+            <form method="POST" action="{{ url_for('login') }}" class="lg-form" autocomplete="on">
+                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                <input type="hidden" name="next" value="{{ next }}">
+                <label class="lg-label" for="lgUser">Username</label>
+                <div class="lg-field">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.2" fill="currentColor"/><path d="M3.8 21c0-4.6 3.6-7.4 8.2-7.4s8.2 2.8 8.2 7.4z" fill="currentColor"/></svg>
+                    <input type="text" id="lgUser" name="username" value="{{ username }}" placeholder="Enter your username" autocomplete="username" required autofocus>
+                </div>
+                <label class="lg-label" for="lgPw">Password</label>
+                <div class="lg-field">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10" width="15" height="11" rx="2.5" fill="currentColor"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                    <input type="password" name="password" id="lgPw" placeholder="Enter your password" autocomplete="current-password" required>
+                    <button type="button" class="lg-eye" aria-label="Show password" onclick="var i=document.getElementById('lgPw');var s=i.type==='password';i.type=s?'text':'password';this.setAttribute('aria-label',s?'Hide password':'Show password');this.classList.toggle('on',s)">
+                        <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+                    </button>
+                </div>
+                <label class="lg-remember"><input type="checkbox" name="remember" value="1"><span></span>Keep me signed in</label>
+                <button type="submit" class="lg-btn">Sign In <span>→</span></button>
+            </form>
+            <div class="lg-or"><i></i><span>✦</span><i></i></div>
+            <a class="lg-back" href="{{ url_for('index') }}">← Back to the website</a>
+        </div>
+    </div>
+</section>
+</main>
+{% endblock %}

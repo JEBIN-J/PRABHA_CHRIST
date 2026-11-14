@@ -752,7 +752,7 @@
                 transform-origin: bottom;
                 opacity: 0;
             }
-        } }
+        }
 
         /* TICKER */
         .ticker {
@@ -1807,7 +1807,7 @@
             flex: none;
             display: flex;
             align-items: center;
-            width: calc(var(--u) * 1500);
+            width: calc(var(--u) * 1420);
             height: calc(var(--u) * 108);
             background: rgba(252, 243, 236, 0.96);
             border-radius: 999px;
@@ -1852,7 +1852,7 @@
 
         .nav-links {
             flex: 1;
-            margin: 0 0 0 calc(var(--u) * 50);
+            margin: 0 0 0 calc(var(--u) * 36);
             padding: 0;
             gap: 0;
             background: transparent;
@@ -1867,8 +1867,8 @@
             align-items: center;
             justify-content: center;
             height: calc(var(--u) * 80);
-            min-width: calc(var(--u) * 130);
-            padding: 0 calc(var(--u) * 34);
+            min-width: calc(var(--u) * 120);
+            padding: 0 calc(var(--u) * 30);
             border-radius: 999px;
             font-family: 'Playfair Display', serif;
             font-size: calc(var(--u) * 27);
@@ -3190,6 +3190,113 @@
             .ln-main { font-size: 18px; height: 24px; }
             .ln-tag { margin-top: 3px; font-size: 8px; }
         }
+
+        /* ---- never let anything make the page wider than the screen (phones) ---- */
+        html, body { max-width: 100%; overflow-x: hidden; }
+        @supports (overflow: clip) { html, body { overflow-x: clip; } }
+        .ab-body, .ab-portrait { overflow-x: clip; }
+        .ticker { overflow: hidden; width: 100%; }
+
+        /* ---- header login button ---- */
+        .nav-actions { display: flex; align-items: flex-start; gap: calc(var(--u) * 18); }
+        .nav-login {
+            display: inline-flex; align-items: center; justify-content: center; gap: calc(var(--u) * 12);
+            height: calc(var(--u) * 83); padding: 0 calc(var(--u) * 30); margin-top: calc(var(--u) * 13);
+            border-radius: 999px; text-decoration: none; white-space: nowrap;
+            font-family: 'Playfair Display', serif; font-weight: 500; font-size: calc(var(--u) * 27); color: #5b0a20;
+            background: rgba(252, 243, 236, 0.96); border: calc(var(--u) * 2.5) solid rgba(196, 145, 74, 0.55);
+            box-shadow: 0 calc(var(--u) * 12) calc(var(--u) * 28) calc(var(--u) * -12) rgba(91, 10, 32, 0.35);
+            transition: transform 0.3s, background 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .nav-login svg { width: calc(var(--u) * 30); height: calc(var(--u) * 30); flex: none; color: #b9833f; }
+        .nav-login:hover, .nav-login.active { transform: translateY(-2px); background: #fff; border-color: #c4914a; color: #7d1030; }
+        @media (max-width: 1100px) {
+            .nav-actions { align-items: center; gap: 8px; }
+            .nav-login { height: 42px; width: 42px; padding: 0; margin: 0; border-width: 1.5px; }
+            .nav-login span { display: none; }
+            .nav-login svg { width: 18px; height: 18px; }
+            .mm-login { display: block; align-self: center; margin-top: 16px; padding: 8px 14px; font-family: 'Playfair Display', serif; font-size: 16px; color: #7d1030; text-decoration: none; border-bottom: 1px solid rgba(196, 145, 74, 0.6); }
+        }
+        @media (min-width: 1101px) { .mm-login { display: none; } }
+
+        /* ---- login page (split card) ---- */
+        .page-main > section.lg-stage, .lg-stage {
+            position: relative; overflow: hidden; min-height: 100vh;
+            display: flex; justify-content: center; align-items: flex-start;
+            padding: max(150px, calc(var(--u) * 230)) 24px 80px;
+            background:
+                radial-gradient(ellipse 35% 45% at 0% 15%, rgba(222, 120, 130, 0.28), transparent 70%),
+                radial-gradient(ellipse 35% 45% at 100% 85%, rgba(217, 168, 103, 0.3), transparent 70%),
+                radial-gradient(ellipse 30% 30% at 90% 10%, rgba(244, 196, 170, 0.45), transparent 70%),
+                linear-gradient(180deg, #fdf4ed 0%, #f9e6da 100%);
+        }
+        .lg-stage::before, .lg-stage::after { content: ''; position: absolute; pointer-events: none; mix-blend-mode: multiply; }
+        .lg-stage::before { left: -20px; bottom: -10px; width: 260px; height: 380px; background: url('{{ url_for("static", filename="img/ct-l.jpg") }}') left center / cover no-repeat; -webkit-mask-image: radial-gradient(ellipse 85% 48% at 0% 55%, #000 35%, transparent 100%); mask-image: radial-gradient(ellipse 85% 48% at 0% 55%, #000 35%, transparent 100%); opacity: 0.85; }
+        .lg-stage::after { right: -10px; top: 120px; width: 240px; height: 360px; background: url('{{ url_for("static", filename="img/ct-r.jpg") }}') right center / cover no-repeat; -webkit-mask-image: radial-gradient(ellipse 85% 48% at 100% 50%, #000 35%, transparent 100%); mask-image: radial-gradient(ellipse 85% 48% at 100% 50%, #000 35%, transparent 100%); opacity: 0.85; }
+
+        .lg-wrap { position: relative; z-index: 1; width: 100%; max-width: 1020px; display: grid; grid-template-columns: 1fr 1fr; border-radius: 32px; overflow: hidden; background: rgba(255, 250, 246, 0.96); border: 1.5px solid rgba(196, 145, 74, 0.65); box-shadow: 0 0 0 8px rgba(255, 250, 246, 0.55), 0 50px 90px -50px rgba(79, 8, 24, 0.75); }
+
+        .lg-art { position: relative; min-height: 560px; color: #fff; }
+        .lg-art-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; }
+        .lg-art-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(61, 6, 18, 0.15) 0%, rgba(61, 6, 18, 0.05) 35%, rgba(61, 6, 18, 0.85) 100%), linear-gradient(90deg, rgba(61, 6, 18, 0.35), transparent 60%); }
+        .lg-art-top { position: absolute; left: 30px; top: 28px; display: flex; align-items: center; gap: 12px; }
+        .lg-art-mark { width: 52px; height: 52px; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35)); }
+        .lg-art-top span { font-family: 'Cinzel', serif; font-weight: 600; font-size: 16px; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 10px rgba(61, 6, 18, 0.6); }
+        .lg-art-top em { font-family: 'Great Vibes', cursive; font-style: normal; font-size: 30px; letter-spacing: 0; text-transform: none; color: #fbe7b8; }
+        .lg-art-quote { position: absolute; left: 34px; right: 34px; bottom: 34px; }
+        .lg-q { display: block; height: 46px; font-family: 'Playfair Display', serif; font-size: 96px; line-height: 0.9; color: rgba(241, 207, 145, 0.75); }
+        .lg-art-quote p { font-family: 'Playfair Display', serif; font-style: italic; font-size: 28px; line-height: 1.3; text-shadow: 0 2px 14px rgba(61, 6, 18, 0.5); }
+        .lg-art-quote p em { font-family: 'Great Vibes', cursive; font-style: normal; font-size: 1.35em; color: #fbe7b8; }
+        .lg-art-quote small { display: block; margin-top: 10px; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(251, 231, 184, 0.9); }
+
+        .lg-panel { padding: 54px 52px 40px; display: flex; flex-direction: column; justify-content: center; }
+        .lg-kicker { display: flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: #b9833f; }
+        .lg-kicker i { width: 30px; height: 1.5px; background: #c4914a; }
+        .lg-kicker i:last-child { display: none; }
+        .lg-title { margin-top: 12px; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 44px; line-height: 1.1; color: #3a0b16; }
+        .lg-title em { font-family: 'Great Vibes', cursive; font-style: normal; font-weight: 400; font-size: 1.35em; display: inline-block; line-height: 1.2; padding: 0.2em 0.12em 0.2em; margin: -0.2em -0.1em -0.2em; background: linear-gradient(105deg, #7a0f2c, #b3123f 60%, #c4914a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .lg-sub { margin: 8px 0 26px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 16.5px; color: #5a3b39; }
+        .lg-error { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding: 12px 14px; border-radius: 12px; font-size: 14px; color: #8f1236; background: rgba(200, 22, 74, 0.07); border: 1px solid rgba(200, 22, 74, 0.35); }
+        .lg-error svg { width: 18px; height: 18px; flex: none; color: #c8164a; }
+        .lg-form { display: flex; flex-direction: column; }
+        .lg-label { margin: 0 0 7px 2px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #5b0a20; }
+        .lg-field { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding: 0 16px; height: 54px; border-radius: 14px; background: #fffdfb; border: 1.5px solid rgba(196, 145, 74, 0.45); box-shadow: inset 0 1px 3px rgba(91, 10, 32, 0.05); transition: border-color 0.25s, box-shadow 0.25s; cursor: text; }
+        .lg-field:focus-within { border-color: #7d1030; box-shadow: 0 0 0 4px rgba(125, 16, 48, 0.1); }
+        .lg-field > svg { width: 18px; height: 18px; flex: none; color: #b9833f; transition: color 0.25s; }
+        .lg-field:focus-within > svg { color: #7d1030; }
+        .lg-field input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-family: 'Jost', sans-serif; font-size: 16px; color: #2b0d10; cursor: auto; }
+        .lg-field input::placeholder { color: #a08884; }
+        .lg-eye { border: 0; background: none; padding: 4px; cursor: pointer; color: #b9833f; display: grid; place-items: center; }
+        .lg-eye svg { width: 20px; height: 20px; }
+        .lg-eye.on { color: #7d1030; }
+        .lg-remember { position: relative; display: flex; align-items: center; gap: 10px; margin: 0 2px 22px; font-size: 14.5px; color: #5a3b39; cursor: pointer; user-select: none; }
+        .lg-remember input { position: absolute; opacity: 0; width: 18px; height: 18px; margin: 0; cursor: pointer; }
+        .lg-remember span { width: 18px; height: 18px; flex: none; border-radius: 5px; border: 1.5px solid #c4914a; background: #fffdfb; display: grid; place-items: center; transition: background 0.2s, border-color 0.2s; }
+        .lg-remember input:checked + span { background: #7d1030; border-color: #7d1030; }
+        .lg-remember input:checked + span::after { content: ''; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg) translate(-1px, -1px); }
+        .lg-remember input:focus-visible + span { box-shadow: 0 0 0 3px rgba(125, 16, 48, 0.2); }
+        .lg-btn { height: 54px; border-radius: 999px; border: 1.5px solid #c4914a; cursor: pointer; font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; background: linear-gradient(180deg, #800f30, #4d0717); box-shadow: 0 16px 28px -14px rgba(79, 8, 24, 0.85), inset 0 1px 0 rgba(255,255,255,.2); transition: transform 0.25s, box-shadow 0.25s; }
+        .lg-btn span { display: inline-block; margin-left: 8px; transition: transform 0.25s; }
+        .lg-btn:hover { transform: translateY(-2px); box-shadow: 0 20px 32px -14px rgba(79, 8, 24, 0.9); }
+        .lg-btn:hover span { transform: translateX(5px); }
+        .lg-or { display: flex; align-items: center; gap: 12px; margin: 22px 0 14px; color: #c4914a; font-size: 12px; }
+        .lg-or i { flex: 1; height: 1px; background: rgba(196, 145, 74, 0.45); }
+        .lg-back { align-self: center; font-family: 'Playfair Display', serif; font-size: 14.5px; color: #7d1030; text-decoration: none; }
+        .lg-back:hover { text-decoration: underline; }
+
+        @media (max-width: 860px) {
+            .page-main > section.lg-stage, .lg-stage { padding: 104px 16px 50px; }
+            .lg-stage::before, .lg-stage::after { display: none; }
+            .lg-wrap { grid-template-columns: 1fr; max-width: 480px; border-radius: 26px; }
+            .lg-art { min-height: 210px; }
+            .lg-art-quote { left: 22px; right: 22px; bottom: 18px; }
+            .lg-q { display: none; }
+            .lg-art-quote p { font-size: 21px; }
+            .lg-art-top { left: 20px; top: 18px; }
+            .lg-art-mark { width: 42px; height: 42px; }
+            .lg-panel { padding: 30px 24px 28px; }
+            .lg-title { font-size: 36px; }
+        }
     </style>
 </head>
 <body>
@@ -3217,6 +3324,11 @@
             <a href="{{ url_for('contact') }}" class="mobile-cta{% if request.endpoint == 'contact' %} active{% endif %}" onclick="closeMob()">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.4" fill="currentColor"/><path d="M3.6 21.5c0-4.8 3.7-7.6 8.4-7.6s8.4 2.8 8.4 7.6z" fill="currentColor"/></svg>
                 Private Inquiry</a>
+            {% if current_user and current_user.is_superuser %}
+            <a href="{{ url_for('dashboard') }}" class="mm-login" onclick="closeMob()">Studio Dashboard →</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="mm-login" onclick="closeMob()">Studio Login →</a>
+            {% endif %}
             <div class="mm-foot">
                 <img src="{{ url_for('static', filename='img/logo-palette.png') }}" alt="" aria-hidden="true">
                 <span>Fine Artist · Est. 2013</span>
@@ -3244,6 +3356,15 @@
             </ul>
         </div>
         <div class="nav-actions">
+            {% if current_user and current_user.is_superuser %}
+            <a href="{{ url_for('dashboard') }}" class="nav-login" title="Studio dashboard">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10" rx="2" fill="currentColor"/><rect x="13" y="3" width="8" height="6" rx="2" fill="currentColor"/><rect x="13" y="11" width="8" height="10" rx="2" fill="currentColor"/><rect x="3" y="15" width="8" height="6" rx="2" fill="currentColor"/></svg>
+                <span>Dashboard</span></a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="nav-login{% if request.endpoint == 'login' %} active{% endif %}" title="Studio login">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10" width="15" height="11" rx="2.5" fill="currentColor"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                <span>Login</span></a>
+            {% endif %}
             <a href="{{ url_for('contact') }}" class="nav-cta{% if request.endpoint == 'contact' %} active{% endif %}">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.4" fill="currentColor"/><path d="M3.6 21.5c0-4.8 3.7-7.6 8.4-7.6s8.4 2.8 8.4 7.6z" fill="currentColor"/></svg>
                 <span>Private Inquiry</span>

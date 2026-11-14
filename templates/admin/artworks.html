@@ -1,0 +1,80 @@
+{% extends "admin/base.html" %}
+{% block title %}Artworks{% endblock %}
+{% block kicker %}Gallery{% endblock %}
+{% block heading %}Manage <em>Artworks</em>{% endblock %}
+{% block actions %}<a class="ad-btn" href="#add"><svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>New artwork</a>{% endblock %}
+{% block content %}
+<section class="ad-card" id="add">
+    <div class="ad-card-head"><h2>Add a new <em>artwork</em></h2></div>
+    <form class="ad-upload" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <label class="ad-drop" id="adDrop">
+            <input type="file" name="file" id="adFile" accept="image/png,image/jpeg,image/gif" required>
+            <img id="adPrev" alt="" hidden>
+            <span class="ad-drop-msg" id="adDropMsg">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 31V13m0 0-7 7m7-7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 30v6a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+                <b>Drop an image here</b><small>or click to browse — PNG, JPG or GIF, up to 16 MB</small>
+            </span>
+        </label>
+        <div class="ad-form">
+            <label>Title<input type="text" name="title" required placeholder="e.g. Crimson Horizon"></label>
+            <label>Category<select name="category_id">{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select></label>
+            <button class="ad-btn wide" type="submit">Publish to gallery</button>
+        </div>
+    </form>
+</section>
+
+<section class="ad-card">
+    <div class="ad-card-head ad-toolbar">
+        <h2>All <em>artworks</em> <small>({{ artworks | length }})</small></h2>
+        <div class="ad-tools">
+            <label class="ad-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" id="adQ" placeholder="Search titles…" aria-label="Search artworks"></label>
+            <div class="ad-tabs" id="adCats">
+                <a href="#" class="on" data-cat="">All</a>
+                {% for c in categories %}<a href="#" data-cat="{{ c.id }}">{{ c.name }}</a>{% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="ad-art-grid" id="adGrid">
+        {% for a in artworks %}
+        <article class="ad-art" data-cat="{{ a.category_id }}" data-title="{{ a.title | lower }}">
+            <div class="ad-art-img"><img src="{{ url_for('static', filename='uploads/' + a.image_path) }}" alt="{{ a.title }}" loading="lazy"><span class="ad-pill solid">{{ a.category_name or 'Art' }}</span></div>
+            <form class="ad-form" method="POST" action="{{ url_for('dash_artwork_edit', art_id=a.id) }}">
+                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                <input type="text" name="title" value="{{ a.title }}" aria-label="Title" required>
+                <select name="category_id" aria-label="Category">{% for c in categories %}<option value="{{ c.id }}" {% if c.id == a.category_id %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select>
+                <div class="ad-art-actions">
+                    <button class="ad-btn sm" type="submit">Save</button>
+                    <button class="ad-btn sm ghost danger" type="submit" formaction="{{ url_for('dash_artwork_delete', art_id=a.id) }}" onclick="return confirm('Remove “{{ a.title }}” from the gallery?')">Delete</button>
+                </div>
+            </form>
+        </article>
+        {% else %}<div class="ad-empty"><b>No artworks yet</b><span>Add your first one above.</span></div>{% endfor %}
+    </div>
+    <p class="ad-empty-line" id="adNone" hidden>No artworks match your search.</p>
+</section>
+
+<script>
+(function () {
+    var file = document.getElementById('adFile'), prev = document.getElementById('adPrev'),
+        msg = document.getElementById('adDropMsg'), drop = document.getElementById('adDrop');
+    function show(f) { if (!f) return; prev.src = URL.createObjectURL(f); prev.hidden = false; msg.hidden = true; drop.classList.add('has'); }
+    file.addEventListener('change', function () { show(file.files[0]); });
+    ['dragenter', 'dragover'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+    ['dragleave', 'drop'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
+    drop.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) { file.files = e.dataTransfer.files; show(file.files[0]); } });
+
+    var q = document.getElementById('adQ'), cat = '', tabs = document.querySelectorAll('#adCats a'), none = document.getElementById('adNone');
+    function filter() {
+        var term = q.value.trim().toLowerCase(), shown = 0;
+        document.querySelectorAll('#adGrid .ad-art').forEach(function (el) {
+            var ok = (!cat || el.dataset.cat === cat) && (!term || el.dataset.title.indexOf(term) > -1);
+            el.hidden = !ok; if (ok) shown++;
+        });
+        none.hidden = shown > 0 || !document.querySelector('#adGrid .ad-art');
+    }
+    q.addEventListener('input', filter);
+    tabs.forEach(function (t) { t.addEventListener('click', function (e) { e.preventDefault(); tabs.forEach(function (x) { x.classList.remove('on'); }); t.classList.add('on'); cat = t.dataset.cat; filter(); }); });
+})();
+</script>
+{% endblock %}

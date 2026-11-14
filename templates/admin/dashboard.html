@@ -1,0 +1,85 @@
+{% extends "admin/base.html" %}
+{% block title %}Overview{% endblock %}
+{% block kicker %}Studio{% endblock %}
+{% block heading %}Dashboard <em>Overview</em>{% endblock %}
+{% block content %}
+<!-- welcome banner -->
+<section class="ad-hero">
+    <div class="ad-hero-art" style="background-image: url('{{ url_for('static', filename='img/about-art.jpg') }}')"></div>
+    <div class="ad-hero-txt">
+        <p class="ad-hero-date">{{ today }}</p>
+        <h2>{{ greeting }}, <em>{{ current_user.username }}</em></h2>
+        <p>{% if stats.unread %}You have <b>{{ stats.unread }} unread message{{ 's' if stats.unread != 1 }}</b> waiting for you.{% else %}All caught up — no unread messages. Time to paint!{% endif %}</p>
+        <div class="ad-quick">
+            <a class="ad-btn" href="{{ url_for('dash_artworks') }}#add"><svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>Add artwork</a>
+            <a class="ad-btn light" href="{{ url_for('dash_messages', show='unread') }}"><svg viewBox="0 0 24 24"><path d="M3 5h18v12H8l-5 4z"/></svg>Read messages</a>
+            <a class="ad-btn light" href="{{ url_for('dash_settings') }}"><svg viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm4 6.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM5 15.6V19h14v-2.8l-3.8-3.8-2.4 2.4-3.5-3.5z"/></svg>Change portrait</a>
+        </div>
+    </div>
+</section>
+
+<!-- stats -->
+<div class="ad-stats">
+    <a class="ad-stat" href="{{ url_for('dash_artworks') }}">
+        <span class="ad-stat-ico i1"><svg viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm4 6.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM5 15.6V19h14v-2.8l-3.8-3.8-2.4 2.4-3.5-3.5z"/></svg></span>
+        <span class="ad-stat-txt"><small>Artworks</small><b>{{ stats.artworks }}</b><i>+{{ stats.art_month }} this month</i></span>
+    </a>
+    <a class="ad-stat" href="{{ url_for('gallery') }}" target="_blank" rel="noopener">
+        <span class="ad-stat-ico i2"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg></span>
+        <span class="ad-stat-txt"><small>Categories</small><b>{{ stats.categories }}</b><i>shown in the gallery</i></span>
+    </a>
+    <a class="ad-stat" href="{{ url_for('dash_messages') }}">
+        <span class="ad-stat-ico i3"><svg viewBox="0 0 24 24"><path d="M3 5h18v12H8l-5 4z"/></svg></span>
+        <span class="ad-stat-txt"><small>Messages</small><b>{{ stats.inquiries }}</b><i>+{{ stats.inq_month }} this month</i></span>
+    </a>
+    <a class="ad-stat {{ 'hot' if stats.unread }}" href="{{ url_for('dash_messages', show='unread') }}">
+        <span class="ad-stat-ico i4"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6zm0 18a2.5 2.5 0 0 0 2.5-2.5h-5A2.5 2.5 0 0 0 12 21z"/></svg></span>
+        <span class="ad-stat-txt"><small>Unread</small><b>{{ stats.unread }}</b><i>{{ 'need a reply' if stats.unread else 'inbox clear' }}</i></span>
+    </a>
+</div>
+
+<div class="ad-grid2">
+    <section class="ad-card">
+        <div class="ad-card-head"><h2>Latest <em>messages</em></h2><a href="{{ url_for('dash_messages') }}">View all →</a></div>
+        {% for q in recent_inq %}
+        <a class="ad-msg {{ 'unread' if not q.is_read }}" href="{{ url_for('dash_messages') }}#m{{ q.id }}">
+            <span class="ad-avatar sm">{{ q.name[:1] | upper }}</span>
+            <div class="ad-msg-body">
+                <div class="ad-msg-top"><b>{{ q.name }}</b>{% if not q.is_read %}<span class="ad-pill new">New</span>{% endif %}<time>{{ q.created_at[:16] }}</time></div>
+                <div class="ad-msg-sub">{{ q.subject }}{% if q.inquiry_type %} <span class="ad-pill">{{ q.inquiry_type }}</span>{% endif %}</div>
+                <p>{{ q.message | truncate(100) }}</p>
+            </div>
+        </a>
+        {% else %}
+        <div class="ad-empty">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 16h48v28H22l-14 10z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M18 26h28M18 34h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            <b>No messages yet</b>
+            <span>When visitors use the contact form, their messages appear here.</span>
+        </div>
+        {% endfor %}
+    </section>
+
+    <section class="ad-card">
+        <div class="ad-card-head"><h2>Gallery <em>mix</em></h2><a href="{{ url_for('dash_artworks') }}">Manage →</a></div>
+        {% set total = (by_cat | sum(attribute='n')) or 1 %}
+        {% set colors = ['#7d1030', '#c4914a', '#c8164a', '#8a5a3c', '#e3b66e', '#4d0717'] %}
+        {% set ns = namespace(acc=0, stops=[]) %}
+        {% for c in by_cat %}{% set start = ns.acc %}{% set ns.acc = ns.acc + c.n / total * 100 %}{% set ns.stops = ns.stops + [colors[loop.index0 % 6] ~ ' ' ~ start ~ '% ' ~ ns.acc ~ '%'] %}{% endfor %}
+        <div class="ad-donut-wrap">
+            <div class="ad-donut" style="background: conic-gradient({{ ns.stops | join(', ') if ns.stops else '#eee 0 100%' }});"><span><b>{{ stats.artworks }}</b><small>works</small></span></div>
+            <ul class="ad-legend">
+                {% for c in by_cat %}<li><i style="background: {{ colors[loop.index0 % 6] }}"></i>{{ c.name }}<b>{{ c.n }}</b></li>{% endfor %}
+            </ul>
+        </div>
+    </section>
+</div>
+
+<section class="ad-card">
+    <div class="ad-card-head"><h2>Recently <em>added</em></h2><a href="{{ url_for('dash_artworks') }}">All artworks →</a></div>
+    <div class="ad-strip">
+        {% for a in recent_art %}
+        <figure><img src="{{ url_for('static', filename='uploads/' + a.image_path) }}" alt="{{ a.title }}" loading="lazy"><figcaption><b>{{ a.title }}</b><small>{{ a.category_name or 'Art' }}</small></figcaption></figure>
+        {% else %}<p class="ad-empty-line">No artworks yet — <a href="{{ url_for('dash_artworks') }}#add">add your first one</a>.</p>{% endfor %}
+    </div>
+</section>
+{% endblock %}
