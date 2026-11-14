@@ -4,44 +4,100 @@
 {% block heading %}Visitor <em>Messages</em>{% endblock %}
 {% block actions %}
 <div class="ad-tabs">
-    <a href="{{ url_for('dash_messages', show='all') }}" class="{{ 'on' if show == 'all' }}">All</a>
-    <a href="{{ url_for('dash_messages', show='unread') }}" class="{{ 'on' if show == 'unread' }}">Unread{% if unread %} <b>{{ unread }}</b>{% endif %}</a>
+    <a href="{{ url_for('dash_messages', show='all') }}" class="{{ 'on' if show == 'all' }}">All <b class="soft">{{ counts.all }}</b></a>
+    <a href="{{ url_for('dash_messages', show='unread') }}" class="{{ 'on' if show == 'unread' }}">Unread{% if counts.unread %} <b>{{ counts.unread }}</b>{% endif %}</a>
 </div>
 {% endblock %}
 {% block content %}
-<div class="ad-msg-list">
-    {% for q in inquiries %}
-    <article class="ad-mcard {{ 'unread' if not q.is_read }}" id="m{{ q.id }}">
-        <header>
-            <span class="ad-avatar sm">{{ q.name[:1] | upper }}</span>
-            <div class="ad-mcard-who">
-                <b>{{ q.name }}</b>
+{% if not inquiries and not selected %}
+<section class="ad-card"><div class="ad-empty">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 16h48v28H22l-14 10z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M18 26h28M18 34h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+    <b>{{ 'No unread messages' if show == 'unread' else 'No messages yet' }}</b>
+    <span>{{ 'You are all caught up.' if show == 'unread' else 'Messages sent from the Contact page will appear here.' }}</span>
+</div></section>
+{% else %}
+<div class="ib {{ 'has-sel' if request.args.get('id') }}">
+    <!-- ===== list ===== -->
+    <aside class="ib-list">
+        <div class="ib-list-tools">
+            <label class="ad-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" id="ibQ" placeholder="Search name, subject…" aria-label="Search messages"></label>
+            {% if types %}
+            <div class="ib-types" id="ibTypes">
+                <button type="button" class="on" data-type="">All types</button>
+                {% for t in types %}<button type="button" data-type="{{ t }}">{{ t }}</button>{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="ib-items" id="ibItems">
+            {% for q in inquiries %}
+            <a class="ib-item {{ 'unread' if not q.is_read }} {{ 'sel' if selected and q.id == selected.id }}" href="{{ url_for('dash_messages', show=show, id=q.id) }}"
+               data-type="{{ q.inquiry_type or '' }}" data-text="{{ (q.name ~ ' ' ~ q.email ~ ' ' ~ q.subject ~ ' ' ~ q.message) | lower }}">
+                <span class="ib-av" style="--h: {{ (q.name | length * 37) % 360 }}">{{ q.name[:1] | upper }}</span>
+                <span class="ib-item-body">
+                    <span class="ib-item-top"><b>{{ q.name }}</b><time title="{{ q.created_at }}">{{ q.created_at | ago }}</time></span>
+                    <span class="ib-item-sub">{{ q.subject }}</span>
+                    <span class="ib-item-snip">{{ q.message | truncate(70) }}</span>
+                    {% if q.inquiry_type %}<span class="ad-pill">{{ q.inquiry_type }}</span>{% endif %}
+                </span>
+                {% if not q.is_read %}<i class="ib-dot" aria-label="Unread"></i>{% endif %}
+            </a>
+            {% else %}
+            <p class="ad-empty-line" style="padding: 20px">No unread messages — you're all caught up.</p>
+            {% endfor %}
+            <p class="ad-empty-line" id="ibNone" hidden style="padding: 20px">No messages match your search.</p>
+        </div>
+    </aside>
+
+    <!-- ===== reading pane ===== -->
+    <section class="ib-read">
+        {% if selected %}
+        {% set q = selected %}
+        <a class="ib-back" href="{{ url_for('dash_messages', show=show) }}">← All messages</a>
+        <header class="ib-head">
+            <span class="ib-av lg" style="--h: {{ (q.name | length * 37) % 360 }}">{{ q.name[:1] | upper }}</span>
+            <div class="ib-who">
+                <h2>{{ q.name }}</h2>
                 <a href="mailto:{{ q.email }}">{{ q.email }}</a>
             </div>
-            <div class="ad-mcard-meta">
-                {% if not q.is_read %}<span class="ad-pill new">New</span>{% endif %}
-                {% if q.inquiry_type %}<span class="ad-pill">{{ q.inquiry_type }}</span>{% endif %}
-                <time>{{ q.created_at[:16] }}</time>
+            <div class="ib-head-actions">
+                {% for act, label, icon in ([('unread', 'Mark unread', 'M3 5h18v12H8l-5 4z')] if q.is_read else [('read', 'Mark read', 'M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z')]) + [('delete', 'Delete', 'M6 7h12l-1 14H7zm3-4h6l1 2h4v2H4V5h4z')] %}
+                <form method="POST" action="{{ url_for('dash_message_action', msg_id=q.id, action=act) }}" {% if act == 'delete' %}onsubmit="return confirm('Delete this message from {{ q.name }}?')"{% endif %}>
+                    <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="show" value="{{ show }}">
+                    <button class="ib-icon {{ 'danger' if act == 'delete' }}" type="submit" title="{{ label }}" aria-label="{{ label }}"><svg viewBox="0 0 24 24"><path d="{{ icon }}"/></svg></button>
+                </form>
+                {% endfor %}
             </div>
         </header>
-        <h3>{{ q.subject }}</h3>
-        <p>{{ q.message }}</p>
-        <footer>
-            <a class="ad-btn sm" href="mailto:{{ q.email }}?subject={{ ('Re: ' ~ q.subject) | urlencode }}"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>Reply by email</a>
-            {% for act, label in ([('unread', 'Mark unread')] if q.is_read else [('read', 'Mark as read')]) + [('delete', 'Delete')] %}
-            <form method="POST" action="{{ url_for('dash_message_action', msg_id=q.id, action=act) }}" {% if act == 'delete' %}onsubmit="return confirm('Delete this message from {{ q.name }}?')"{% endif %}>
-                <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="show" value="{{ show }}">
-                <button class="ad-btn sm ghost {{ 'danger' if act == 'delete' }}" type="submit">{{ label }}</button>
-            </form>
-            {% endfor %}
-        </footer>
-    </article>
-    {% else %}
-    <section class="ad-card"><div class="ad-empty">
-        <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 16h48v28H22l-14 10z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M18 26h28M18 34h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-        <b>{{ 'No unread messages' if show == 'unread' else 'No messages yet' }}</b>
-        <span>{{ 'You are all caught up.' if show == 'unread' else 'Messages sent from the Contact page will appear here.' }}</span>
-    </div></section>
-    {% endfor %}
+
+        <div class="ib-meta">
+            {% if q.inquiry_type %}<span class="ad-pill">{{ q.inquiry_type }}</span>{% endif %}
+            <span class="ib-meta-time"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>{{ q.created_at[:16] }} · {{ q.created_at | ago }}</span>
+        </div>
+        <h3 class="ib-subject">{{ q.subject }}</h3>
+        <div class="ib-body">{{ q.message }}</div>
+
+        {% endif %}
+    </section>
 </div>
+
+<script>
+(function () {
+    // search + type filter
+    var q = document.getElementById('ibQ'), none = document.getElementById('ibNone'), type = '';
+    function filter() {
+        var term = (q.value || '').trim().toLowerCase(), shown = 0;
+        document.querySelectorAll('#ibItems .ib-item').forEach(function (el) {
+            var ok = (!type || el.dataset.type === type) && (!term || el.dataset.text.indexOf(term) > -1);
+            el.hidden = !ok; if (ok) shown++;
+        });
+        none.hidden = shown > 0 || !document.querySelector('#ibItems .ib-item');
+    }
+    if (q) q.addEventListener('input', filter);
+    document.querySelectorAll('#ibTypes button').forEach(function (b, _, all) {
+        b.addEventListener('click', function () { all.forEach(function (x) { x.classList.remove('on'); }); b.classList.add('on'); type = b.dataset.type; filter(); });
+    });
+
+})();
+</script>
+{% endif %}
 {% endblock %}

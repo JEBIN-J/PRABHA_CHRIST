@@ -416,6 +416,28 @@ def dash_artwork_delete(art_id):
     return redirect(url_for('dash_artworks'))
 
 
+def time_ago(ts):
+    """'2026-11-14 13:50:00' (UTC, from SQLite) -> 'just now' / '5 min ago' / '3 h ago' / '2 days ago' / '14 Nov'"""
+    try:
+        t = time.mktime(time.strptime(ts[:19], '%Y-%m-%d %H:%M:%S')) - time.timezone
+    except (TypeError, ValueError):
+        return ts or ''
+    d = time.time() - t
+    if d < 60:
+        return 'just now'
+    if d < 3600:
+        return '%d min ago' % (d // 60)
+    if d < 86400:
+        return '%d h ago' % (d // 3600)
+    if d < 7 * 86400:
+        n = int(d // 86400)
+        return '%d day%s ago' % (n, '' if n == 1 else 's')
+    return time.strftime('%d %b %Y', time.localtime(t))
+
+
+app.jinja_env.filters['ago'] = time_ago
+
+
 @app.route('/dashboard/messages')
 @superuser_required
 def dash_messages():
@@ -423,8 +445,26 @@ def dash_messages():
     conn = get_db_connection()
     sql = 'SELECT * FROM inquiries' + (' WHERE is_read = 0' if show == 'unread' else '') + ' ORDER BY created_at DESC, id DESC'
     inquiries = conn.execute(sql).fetchall()
+    selected = None
+    sel_id = request.args.get('id', type=int)
+    if sel_id:
+        selected = conn.execute('SELECT * FROM inquiries WHERE id = ?', (sel_id,)).fetchone()
+    elif inquiries:
+        selected = inquiries[0]
+    if selected and not selected['is_read'] and sel_id:
+        # opening a message marks it as read
+        conn.execute('UPDATE inquiries SET is_read = 1 WHERE id = ?', (selected['id'],))
+        conn.commit()
+        selected = conn.execute('SELECT * FROM inquiries WHERE id = ?', (selected['id'],)).fetchone()
+        inquiries = conn.execute(sql).fetchall()
+    counts = {
+        'all': conn.execute('SELECT COUNT(*) FROM inquiries').fetchone()[0],
+        'unread': conn.execute('SELECT COUNT(*) FROM inquiries WHERE is_read = 0').fetchone()[0],
+    }
+    types = [r[0] for r in conn.execute('SELECT DISTINCT inquiry_type FROM inquiries WHERE inquiry_type IS NOT NULL ORDER BY 1')]
     conn.close()
-    return render_template('admin/messages.html', inquiries=inquiries, show=show, active='messages')
+    return render_template('admin/messages.html', inquiries=inquiries, selected=selected, show=show,
+                           counts=counts, types=types, active='messages')
 
 
 @app.route('/dashboard/messages/<int:msg_id>/<action>', methods=['POST'])
@@ -444,7 +484,9 @@ def dash_message_action(msg_id, action):
     conn.commit()
     conn.close()
     show = request.form.get('show') if request.form.get('show') in ('all', 'unread') else 'all'
-    return redirect(url_for(request.form.get('back') == 'dashboard' and 'dashboard' or 'dash_messages', **({} if request.form.get('back') == 'dashboard' else {'show': show})))
+    if action == 'delete':
+        return redirect(url_for('dash_messages', show=show))
+    return redirect(url_for('dash_messages', show=show, **({'id': msg_id} if action == 'read' else {})))
 
 
 @app.route('/dashboard/settings', methods=['GET', 'POST'])

@@ -3502,6 +3502,17 @@
             els.forEach(el => io.observe(el));
         })();
 
+        // Flash messages fade out after 3 seconds
+        (function () {
+            var wrap = document.querySelector('.flash-wrap');
+            if (!wrap) return;
+            setTimeout(function () {
+                wrap.style.transition = 'opacity 0.5s, transform 0.5s';
+                wrap.style.opacity = '0'; wrap.style.transform = 'translateY(-10px)';
+                setTimeout(function () { wrap.remove(); }, 500);
+            }, 3000);
+        })();
+
         // Touch
         if ('ontouchstart' in window) { dot.style.display = 'none'; ring.style.display = 'none'; document.body.style.cursor = 'auto'; }
     </script>

@@ -64,5 +64,21 @@
         <div class="ad-content">{% block content %}{% endblock %}</div>
     </div>
 </div>
+<script>
+    // flash messages: fade out after 3 seconds (or when × is clicked)
+    document.querySelectorAll('.ad-flash').forEach(function (el, i) {
+        function hide() { el.classList.add('hide'); setTimeout(function () { el.remove(); }, 450); }
+        var t = setTimeout(hide, 3000 + i * 400);
+        var btn = el.querySelector('button');
+        if (btn) btn.onclick = function () { clearTimeout(t); hide(); };
+    });
+
+    // add a shadow to the pinned top bar once the page is scrolled
+    (function () {
+        var top = document.querySelector('.ad-top');
+        function update() { top.classList.toggle('stuck', window.scrollY > 8); }
+        window.addEventListener('scroll', update, { passive: true }); update();
+    })();
+</script>
 </body>
 </html>
